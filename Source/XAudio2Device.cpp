@@ -15,11 +15,13 @@ namespace onesnd
         CoInitializeEx(nullptr, COINIT_MULTITHREADED);
         auto flags = long();
 
-    #if defined (_WIN32) && defined (_DEBUG)
+    /*#if defined (_WIN32) && defined (_DEBUG)
         flags |= XAUDIO2_DEBUG_ENGINE;
     #else
         flags |= 0;
-    #endif
+    #endif*/
+        flags |= 0;
+
 
         XAudio2Create(&xEngine, flags);
         xEngine->CreateMasteringVoice(&xMaster, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE);

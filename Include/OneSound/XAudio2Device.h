@@ -11,10 +11,10 @@
 #include "..\ThirdParty\Include\XAudio2_7\XAudio2.h"
 #include "..\ThirdParty\Include\XAudio2_7\X3DAudio.h"
 
-#if defined (_WIN32)
-#   pragma comment(lib, "../ThirdParty/X3DAudio86.lib")
-#elif not defined (_WIN32)
-#   pragma comment(lib, "../ThirdParty/X3DAudio64.lib")
+#if defined (_WIN64)
+#   pragma comment(lib, "X3DAudio64.lib")
+#else
+#   pragma comment(lib, "X3DAudio86.lib")
 #endif
 
 namespace onesnd

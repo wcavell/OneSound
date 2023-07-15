@@ -46,7 +46,7 @@ namespace onesnd
 
     std::string OneSound::getLibraryVersionStr() const
     {
-        return "1.0"s;
+        return "1.0.6"s;
     }
 
     std::string OneSound::getLibraryStatus() const

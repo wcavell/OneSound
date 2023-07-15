@@ -174,7 +174,7 @@ namespace onesnd
         int actual = streampos / SampleBlockSize; // mpg_seek works by sample blocks, so lets select the sample
 
         mpg_seek(FileHandle, actual, SEEK_SET);
-
+        stream_position = streampos;
         return streampos;
     }
 }
