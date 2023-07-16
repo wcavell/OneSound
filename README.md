@@ -1,6 +1,12 @@
 OneSound
 ==========
+本项目是基于[OneSound](https://github.com/xnhunter/OneSound) 拓展3D音效，主要还是想用于Unity3D上，2D/3D音效输出到特定的声道(5.1 7.1等)
 Modern library for audio playback supporting 3 common audio formats. The software provides a **high-performance** audio sources, it is written in C++17. The library is generally suited for a game engine or media applications.
+
+功能
+--------
+3D未完成
+
 
 Overview
 --------

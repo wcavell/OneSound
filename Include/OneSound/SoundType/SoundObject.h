@@ -24,9 +24,10 @@ namespace onesnd
 
         IXAudio2SourceVoice* source;		// the sound source generator (interfaces XAudio2 to generate waveforms)
         SoundObjectState* state;			// Holds and manages the current state of a SoundObject
-
+        float* channelMatrix;
         X3DAUDIO_EMITTER Emitter;			// 3D sound emitter data (this object)
-
+        UINT32 leftChannel;
+        UINT32 rightChannel;
         /**
         * Creates an uninitialzed empty SoundObject
         */
@@ -156,5 +157,11 @@ namespace onesnd
         * @return Number of samples processed every second (aka SampleRate or Frequency)
         */
         int getSamplesPerSecond() const;
+
+        /*
+        * 设置声道输出映射
+        */
+        void setOutChannel(const uint32_t& speakerLeftChannel,const uint32_t& speakerRightChannel);
+
     };
 }

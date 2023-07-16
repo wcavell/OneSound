@@ -32,7 +32,7 @@ namespace onesnd
         void initialize() const;
 
         XAUDIO2_PERFORMANCE_DATA getPerfomanceData() const;
-
+        int32_t getOutputChannels() const;
         void finalize() const;
 
     public:

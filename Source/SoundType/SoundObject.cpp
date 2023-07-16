@@ -20,17 +20,23 @@ namespace onesnd
     SoundObject::SoundObject() : 
         sound(nullptr), 
         source(nullptr), 
-        state(nullptr)
+        state(nullptr),
+        channelMatrix(nullptr),
+        leftChannel(0),
+        rightChannel(0)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
         Emitter.CurveDistanceScaler = FLT_MIN;
     }
 
-    SoundObject::SoundObject(const std::shared_ptr<SoundBuffer>& sound, const bool& looping, const bool& playing, const float& volume) : 
+    SoundObject::SoundObject(const std::shared_ptr<SoundBuffer>& sound, const bool& looping, const bool& playing, const float& volume) :
         sound(nullptr), 
         source(nullptr), 
-        state(nullptr)
+        state(nullptr),
+        channelMatrix(nullptr),
+        leftChannel(0),
+        rightChannel(0)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
@@ -48,7 +54,12 @@ namespace onesnd
     }
 
     SoundObject::~SoundObject()
-    {
+    {  
+        if (channelMatrix != nullptr)
+        {
+            free(channelMatrix);
+            channelMatrix = nullptr;
+        }
         if (sound) 
             setSound(nullptr);
 
@@ -57,6 +68,8 @@ namespace onesnd
             source->DestroyVoice();
             source = nullptr;
         }
+
+      
     }
 
     void SoundObject::setSound(const std::shared_ptr<SoundBuffer>& sound_buf, const bool& loop, const bool& play, const float& volume)
@@ -78,9 +91,9 @@ namespace onesnd
             state->isInitial = true;
             state->isPlaying = play;
             state->isLoopable = loop;
-            state->isPaused = false;
-
+            state->isPaused = false;           
             sound = sound_buf; // set new Sound
+            setVolume(volume); 
         }
     }
 
@@ -124,6 +137,8 @@ namespace onesnd
 
         if (play)
             this->play();
+        //source->SetOutputMatrix()
+       
     }
 
     void SoundObject::stop()
@@ -227,7 +242,7 @@ namespace onesnd
     {
         if (!sound) 
             return;
-
+        
         if (sound->IsStream()) // stream objects
             ((SoundStream*)sound.get())->Seek(this, seekpos); // seek the stream
         else // single buffer objects
@@ -247,7 +262,7 @@ namespace onesnd
         }
 
         if (state->isPlaying)
-            source->Start();
+            source->Start(); 
     }
 
     int SoundObject::getPlaybackSize() const
@@ -259,5 +274,100 @@ namespace onesnd
     int SoundObject::getSamplesPerSecond() const
     {
         return sound ? sound->Frequency() : 0;
+    } 
+    void SoundObject::setOutChannel(const uint32_t& speakerLeftChannel, const uint32_t& speakerRightChannel)
+    {
+        leftChannel = speakerLeftChannel;
+        rightChannel = speakerRightChannel;
+        if (sound)
+        {
+            XAUDIO2_DEVICE_DETAILS dd;
+            ZeroMemory(&dd, sizeof(dd));
+            XAudio2Device::instance().getEngine()->GetDeviceDetails(0, &dd);
+            channelMatrix = (float*)malloc(sizeof(float) * sound->Channels() * dd.OutputFormat.Format.nChannels);
+            auto matrix = channelMatrix;
+            bool matrixAvailable = true;
+            if (sound->Channels() == 1) 
+            {
+
+            }
+            else
+            {
+				switch (dd.OutputFormat.Format.nChannels)
+				{
+                //Speaker   Left Source           Right Source
+				case 2://2.0
+                    /*Front L*/	
+                    if (leftChannel == SPEAKER_FRONT_LEFT)
+                        matrix[0] = matrix[1] = 1.0000f;
+                    else 
+                        matrix[0] = matrix[1] = 0.0000f;
+                    /*Front R*/	
+                    if (rightChannel == SPEAKER_FRONT_RIGHT)
+                        matrix[2] = matrix[3] = 1.0f;
+                    else 
+                        matrix[2] = matrix[3] = 0.0f;
+					break;
+				case 4: // 4.0
+					
+					/*Front L*/	
+                    matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
+					/*Front R*/	
+                    matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
+					/*Back  L*/	
+                    matrix[4] = 1.0000f;  matrix[5] = 0.0000f;
+					/*Back  R*/	
+                    matrix[6] = 0.0000f;  matrix[7] = 1.0000f;
+					break;
+				case 5: // 5.0
+					//Speaker \ Left Source           Right Source
+					/*Front L*/	
+                    matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
+					/*Front R*/	
+                    matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
+					/*Front C*/	
+                    matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
+					/*Side  L*/	
+                    matrix[6] = 1.0000f;  matrix[7] = 0.0000f;
+					/*Side  R*/	
+                    matrix[8] = 0.0000f;  matrix[9] = 1.0000f;
+					break;
+				case 6: // 5.1
+					//Speaker \ Left Source           Right Source
+					/*Front L*/	matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
+					/*Front R*/	matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
+					/*Front C*/	matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
+					/*LFE    */	matrix[6] = 0.0000f;  matrix[7] = 0.0000f;
+					/*Side  L*/	matrix[8] = 1.0000f;  matrix[9] = 0.0000f;
+					/*Side  R*/	matrix[10] = 0.0000f;  matrix[11] = 1.0000f;
+					break;
+				case 7: // 6.1
+					//Speaker \ Left Source           Right Source
+					/*Front L*/	matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
+					/*Front R*/	matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
+					/*Front C*/	matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
+					/*LFE    */	matrix[6] = 0.0000f;  matrix[7] = 0.0000f;
+					/*Side  L*/	matrix[8] = 1.0000f;  matrix[9] = 0.0000f;
+					/*Side  R*/	matrix[10] = 0.0000f;  matrix[11] = 1.0000f;
+					/*Back  C*/	matrix[12] = 0.7071f;  matrix[13] = 0.7071f;
+					break;
+				case 8: // 7.1
+					//Speaker \ Left Source           Right Source
+					/*Front L*/	matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
+					/*Front R*/	matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
+					/*Front C*/	matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
+					/*LFE    */	matrix[6] = 0.0000f;  matrix[7] = 0.0000f;
+					/*Back  L*/	matrix[8] = 1.0000f;  matrix[9] = 0.0000f;
+					/*Back  R*/	matrix[10] = 0.0000f;  matrix[11] = 1.0000f;
+					/*Side  L*/	matrix[12] = 1.0000f;  matrix[13] = 0.0000f;
+					/*Side  R*/	matrix[14] = 0.0000f;  matrix[15] = 1.0000f;
+					break;
+				default:
+					matrixAvailable = false;
+					break;
+				}
+            }
+            
+        }       
     }
 }

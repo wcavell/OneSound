@@ -28,7 +28,11 @@ macro(ADD_DEFINE IDENT)
 	endif()
 endmacro()
 
-
+if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
+    set(ARCH 64)
+else()
+    set(ARCH 86)
+endif()
 
 
 
@@ -68,16 +72,22 @@ set(
 	${FilesSoundType}
 	${FilesStreamType}
 )
-
 # Main Project
-add_library(OneSound SHARED ${FilesAll})
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/ThirdParty)
+
+add_library(OneSound SHARED ${FilesAll}) 
 set_target_properties(OneSound PROPERTIES LINKER_LANGUAGE CXX DEBUG_POSTFIX "D")
 target_compile_features(OneSound PRIVATE cxx_range_for)
-LINK_DIRECTORIES(OneSound/ThirdParty/)
+
 if(WIN32)
 	target_link_libraries(OneSound Winmm)	
+
 endif()
  
+add_custom_command(TARGET OneSound POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_SOURCE_DIR}/ThirdParty/x${ARCH}"
+        $<TARGET_FILE_DIR:OneSound>)
 
 # 将源代码添加到此项目的可执行文件。
 #add_executable (OneSound "OneSound.cpp" "OneSound.h")
@@ -86,6 +96,7 @@ macro(ADD_TEST_PROJECT TEST_NAME TEST_FILES)
 	target_link_libraries(${TEST_NAME} OneSound)
 	set_target_properties(${TEST_NAME} PROPERTIES LINKER_LANGUAGE CXX DEBUG_POSTFIX "D")
 	target_compile_features(${TEST_NAME} PRIVATE cxx_range_for)
+	 
 endmacro()
 
 ADD_TEST_PROJECT(Example1_SimpleSound ${FilesTest1})
@@ -99,5 +110,6 @@ if (CMAKE_VERSION VERSION_GREATER 3.10)
   set_property(TARGET OneSound PROPERTY CXX_STANDARD 17)  
   set_property(TARGET OneSound PROPERTY CXX_STANDARD_REQUIRED ON) 
 endif()
+
 
 # TODO: 如有需要，请添加测试并安装目标。
