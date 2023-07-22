@@ -1,0 +1,10 @@
+# 如果要从更高级别的目录继承 .editorconfig 设置，请删除以下行
+root = true
+
+# c# 文件
+[*.cs]
+[*.h]
+[*.cpp]
+
+#### Core EditorConfig 选项 ####
+charset = utf-8  # 文件编码格式，Visual Studio使用utf-8，以防警告

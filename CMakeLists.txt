@@ -28,13 +28,12 @@ macro(ADD_DEFINE IDENT)
 	endif()
 endmacro()
 
-if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH 64)
-else()
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(ARCH 86)
 endif()
-
-
 
 file(GLOB FilesInclude		${PROJECT_INCLUDE_DIR}/OneSound/*.*)
 file(GLOB FilesSoundTypeI	${PROJECT_INCLUDE_DIR}/OneSound/SoundType/*.*)

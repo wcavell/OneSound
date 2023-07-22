@@ -41,11 +41,12 @@ namespace onesnd
 
         IXAudio2* getEngine() const { return xEngine; }
         IXAudio2MasteringVoice* getMaster() const { return xMaster; }
-
+    public:
+        X3DAUDIO_HANDLE x3DAudioHandle;
     private:
         IXAudio2* xEngine;
         IXAudio2MasteringVoice* xMaster;
-        X3DAUDIO_HANDLE x3DAudioHandle;
+        
         X3DAUDIO_LISTENER xListener;
     };
     

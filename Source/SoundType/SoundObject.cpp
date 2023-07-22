@@ -22,12 +22,13 @@ namespace onesnd
         source(nullptr), 
         state(nullptr),
         channelMatrix(nullptr),
-        leftChannel(0),
+        leftChannel(0), 
         rightChannel(0)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
         Emitter.CurveDistanceScaler = FLT_MIN;
+        
     }
 
     SoundObject::SoundObject(const std::shared_ptr<SoundBuffer>& sound, const bool& looping, const bool& playing, const float& volume) :
@@ -43,7 +44,7 @@ namespace onesnd
         Emitter.CurveDistanceScaler = FLT_MIN;
 
         if (sound)
-            setSound(sound);
+            setSound(sound); 
 
         setLooping(looping);
 
@@ -370,4 +371,10 @@ namespace onesnd
             
         }       
     }
+
+    void SoundObject::apply3D()
+    {
+	    
+    }
+
 }

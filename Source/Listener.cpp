@@ -24,7 +24,7 @@ namespace onesnd
     {
         float value;
         XAudio2Device::instance().getMaster()->GetVolume(&value);
-
+        
         return value;
     }
 }

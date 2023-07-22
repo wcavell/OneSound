@@ -7,6 +7,7 @@
 #pragma once
 
 #include "OneSound\Export.h"
+#include "OneSound\XAudio2Device.h"
 
 namespace onesnd
 {
@@ -15,16 +16,18 @@ namespace onesnd
     {
     public:
         Listener();
-       ~Listener();
+        ~Listener();
 
         Listener(const Listener&) = default;
         Listener(Listener&&) = default;
 
         Listener operator=(const Listener&) = delete;
         Listener operator=(Listener&&) = delete;
-
     public:
         void setVolume(float volume);
         float getVolume() const;
+        X3DAUDIO_LISTENER* getListener() const { return xListener; }        
+    private:
+        X3DAUDIO_LISTENER* xListener;
     };
 }
