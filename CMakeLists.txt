@@ -71,7 +71,7 @@ set(
 	${FilesSoundType}
 	${FilesStreamType}
 )
-# Main Project
+
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/ThirdParty)
 
 add_library(OneSound SHARED ${FilesAll}) 
@@ -84,12 +84,17 @@ if(WIN32)
 endif()
  
 add_custom_command(TARGET OneSound POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
+	COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:OneSound>/Sound
+    COMMAND ${CMAKE_COMMAND} -E copy_directory 
         "${PROJECT_SOURCE_DIR}/ThirdParty/x${ARCH}"
-        $<TARGET_FILE_DIR:OneSound>)
+        $<TARGET_FILE_DIR:OneSound>
+	COMMAND ${CMAKE_COMMAND} -E copy_directory  
+		"${PROJECT_SOURCE_DIR}/Example/Sound" 
+		$<TARGET_FILE_DIR:OneSound>/Sound
+)
 
-# 将源代码添加到此项目的可执行文件。
-#add_executable (OneSound "OneSound.cpp" "OneSound.h")
+
+
 macro(ADD_TEST_PROJECT TEST_NAME TEST_FILES)
 	add_executable(${TEST_NAME} ${TEST_FILES})
 	target_link_libraries(${TEST_NAME} OneSound)
@@ -111,4 +116,4 @@ if (CMAKE_VERSION VERSION_GREATER 3.10)
 endif()
 
 
-# TODO: 如有需要，请添加测试并安装目标。
+
