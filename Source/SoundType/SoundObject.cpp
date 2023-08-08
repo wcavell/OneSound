@@ -292,11 +292,16 @@ namespace onesnd
             UINT32* mChannel = (UINT32*)malloc(sizeof(UINT32) * dd.OutputFormat.Format.nChannels);
 
             switch (dd.OutputFormat.Format.nChannels)
-            {
+            { 
                 //Speaker   Left Source           Right Source
             case 2://2.0 
                 mChannel[0] = SPEAKER_FRONT_LEFT;
                 mChannel[1] = SPEAKER_FRONT_RIGHT;
+                break;
+            case 3:
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                mChannel[2] = SPEAKER_LOW_FREQUENCY;
                 break;
             case 4: // 4.0 
                 mChannel[0] = SPEAKER_FRONT_LEFT;
