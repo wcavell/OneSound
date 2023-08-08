@@ -288,6 +288,60 @@ namespace onesnd
             channelMatrix = (float*)malloc(sizeof(float) * sound->Channels() * dd.OutputFormat.Format.nChannels);
             auto matrix = channelMatrix;
             bool matrixAvailable = true;
+
+            UINT32* mChannel = (UINT32*)malloc(sizeof(UINT32) * dd.OutputFormat.Format.nChannels);
+
+            switch (dd.OutputFormat.Format.nChannels)
+            {
+                //Speaker   Left Source           Right Source
+            case 2://2.0 
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                break;
+            case 4: // 4.0 
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                mChannel[2] = SPEAKER_BACK_LEFT;
+                mChannel[3] = SPEAKER_BACK_RIGHT;
+                break;
+            case 5: // 5.0  
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                mChannel[2] = SPEAKER_LOW_FREQUENCY;
+                mChannel[3] = SPEAKER_SIDE_LEFT;
+                mChannel[4] = SPEAKER_SIDE_RIGHT;
+                break;
+            case 6: // 5.1 
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                mChannel[2] = SPEAKER_FRONT_CENTER;
+                mChannel[3] = SPEAKER_LOW_FREQUENCY;
+                mChannel[4] = SPEAKER_SIDE_LEFT;
+                mChannel[5] = SPEAKER_SIDE_RIGHT;
+                break;
+            case 7: // 6.1 
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                mChannel[2] = SPEAKER_FRONT_CENTER;
+                mChannel[3] = SPEAKER_LOW_FREQUENCY;
+                mChannel[4] = SPEAKER_SIDE_LEFT;
+                mChannel[5] = SPEAKER_SIDE_RIGHT;
+                mChannel[6] = SPEAKER_BACK_CENTER;
+                break;
+            case 8: // 7.1 
+                mChannel[0] = SPEAKER_FRONT_LEFT;
+                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                mChannel[2] = SPEAKER_FRONT_CENTER;
+                mChannel[3] = SPEAKER_LOW_FREQUENCY; 
+                mChannel[4] = SPEAKER_BACK_LEFT;
+                mChannel[5] = SPEAKER_BACK_RIGHT;
+                mChannel[6] = SPEAKER_SIDE_LEFT;
+                mChannel[7] = SPEAKER_SIDE_RIGHT;               
+                break;
+            default:
+                matrixAvailable = false;
+                break;
+            }
             if (sound->Channels() == 1) 
             {
 
