@@ -24,7 +24,9 @@ namespace onesnd
         channelMatrix(nullptr),
         leftChannel(0), 
         rightChannel(0),
-		channelMap(nullptr)
+		channelMap(nullptr),
+        soundChannel(0),
+        outChannelCount(0)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
@@ -39,7 +41,9 @@ namespace onesnd
         channelMatrix(nullptr),
         leftChannel(0),
         rightChannel(0),
-		channelMap(nullptr)
+        soundChannel(0),
+		channelMap(nullptr),
+        outChannelCount(0)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
@@ -435,5 +439,7 @@ namespace onesnd
         }
         source->SetOutputMatrix(nullptr, soundChannel, outChannelCount, channelMatrix);
     }
-
+    void SoundObject::setSoundChannel(const int& channel) {
+        soundChannel = channel;
+    }
 }

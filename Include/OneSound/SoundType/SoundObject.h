@@ -167,6 +167,8 @@ namespace onesnd
         */
         void setOutChannel(const uint32_t& speakerLeftChannel,const uint32_t& speakerRightChannel);
 
+        void setSoundChannel(const int& channel);
+
     protected:
         void setOutChannelVolume(const float& leftVolume, const float& rightVolume);
          
