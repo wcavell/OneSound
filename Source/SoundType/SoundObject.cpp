@@ -23,7 +23,8 @@ namespace onesnd
         state(nullptr),
         channelMatrix(nullptr),
         leftChannel(0), 
-        rightChannel(0)
+        rightChannel(0),
+		channelMap(nullptr)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
@@ -37,7 +38,8 @@ namespace onesnd
         state(nullptr),
         channelMatrix(nullptr),
         leftChannel(0),
-        rightChannel(0)
+        rightChannel(0),
+		channelMap(nullptr)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
@@ -60,6 +62,11 @@ namespace onesnd
         {
             free(channelMatrix);
             channelMatrix = nullptr;
+        }
+        if(channelMap!=nullptr)
+        {
+            free(channelMap);
+            channelMap = nullptr;
         }
         if (sound) 
             setSound(nullptr);
@@ -285,150 +292,130 @@ namespace onesnd
             XAUDIO2_DEVICE_DETAILS dd;
             ZeroMemory(&dd, sizeof(dd));
             XAudio2Device::instance().getEngine()->GetDeviceDetails(0, &dd);
-            channelMatrix = (float*)malloc(sizeof(float) * sound->Channels() * dd.OutputFormat.Format.nChannels);
-            auto matrix = channelMatrix;
+            channelMatrix = (float*)malloc(sizeof(float) * sound->Channels() * dd.OutputFormat.Format.nChannels); 
             bool matrixAvailable = true;
-
-            UINT32* mChannel = (UINT32*)malloc(sizeof(UINT32) * dd.OutputFormat.Format.nChannels);
+            uint16_t outCount = dd.OutputFormat.Format.nChannels;
+            int soundChannels = sound->Channels();
+            channelMap = (UINT32*)malloc(sizeof(UINT32) * dd.OutputFormat.Format.nChannels);
 
             switch (dd.OutputFormat.Format.nChannels)
             { 
                 //Speaker   Left Source           Right Source
             case 2://2.0 
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
                 break;
             case 3:
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
-                mChannel[2] = SPEAKER_LOW_FREQUENCY;
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[2] = SPEAKER_LOW_FREQUENCY;
                 break;
             case 4: // 4.0 
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
-                mChannel[2] = SPEAKER_BACK_LEFT;
-                mChannel[3] = SPEAKER_BACK_RIGHT;
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[2] = SPEAKER_BACK_LEFT;
+                channelMap[3] = SPEAKER_BACK_RIGHT;
                 break;
             case 5: // 5.0  
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
-                mChannel[2] = SPEAKER_LOW_FREQUENCY;
-                mChannel[3] = SPEAKER_SIDE_LEFT;
-                mChannel[4] = SPEAKER_SIDE_RIGHT;
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[2] = SPEAKER_LOW_FREQUENCY;
+                channelMap[3] = SPEAKER_SIDE_LEFT;
+                channelMap[4] = SPEAKER_SIDE_RIGHT;
                 break;
             case 6: // 5.1 
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
-                mChannel[2] = SPEAKER_FRONT_CENTER;
-                mChannel[3] = SPEAKER_LOW_FREQUENCY;
-                mChannel[4] = SPEAKER_SIDE_LEFT;
-                mChannel[5] = SPEAKER_SIDE_RIGHT;
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[2] = SPEAKER_FRONT_CENTER;
+                channelMap[3] = SPEAKER_LOW_FREQUENCY;
+                channelMap[4] = SPEAKER_SIDE_LEFT;
+                channelMap[5] = SPEAKER_SIDE_RIGHT;
                 break;
             case 7: // 6.1 
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
-                mChannel[2] = SPEAKER_FRONT_CENTER;
-                mChannel[3] = SPEAKER_LOW_FREQUENCY;
-                mChannel[4] = SPEAKER_SIDE_LEFT;
-                mChannel[5] = SPEAKER_SIDE_RIGHT;
-                mChannel[6] = SPEAKER_BACK_CENTER;
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[2] = SPEAKER_FRONT_CENTER;
+                channelMap[3] = SPEAKER_LOW_FREQUENCY;
+                channelMap[4] = SPEAKER_SIDE_LEFT;
+                channelMap[5] = SPEAKER_SIDE_RIGHT;
+                channelMap[6] = SPEAKER_BACK_CENTER;
                 break;
             case 8: // 7.1 
-                mChannel[0] = SPEAKER_FRONT_LEFT;
-                mChannel[1] = SPEAKER_FRONT_RIGHT;
-                mChannel[2] = SPEAKER_FRONT_CENTER;
-                mChannel[3] = SPEAKER_LOW_FREQUENCY; 
-                mChannel[4] = SPEAKER_BACK_LEFT;
-                mChannel[5] = SPEAKER_BACK_RIGHT;
-                mChannel[6] = SPEAKER_SIDE_LEFT;
-                mChannel[7] = SPEAKER_SIDE_RIGHT;               
+                channelMap[0] = SPEAKER_FRONT_LEFT;
+                channelMap[1] = SPEAKER_FRONT_RIGHT;
+                channelMap[2] = SPEAKER_FRONT_CENTER;
+                channelMap[3] = SPEAKER_LOW_FREQUENCY;
+                channelMap[4] = SPEAKER_BACK_LEFT;
+                channelMap[5] = SPEAKER_BACK_RIGHT;
+                channelMap[6] = SPEAKER_SIDE_LEFT;
+                channelMap[7] = SPEAKER_SIDE_RIGHT;
                 break;
             default:
                 matrixAvailable = false;
                 break;
             }
-            if (sound->Channels() == 1) 
+            if (soundChannels == 1) 
             {
-
+	            for (int i = 0; i < outCount; ++i)
+	            {
+                    if (channelMap[i] == leftChannel || channelMap[i] == rightChannel)
+                    {
+                        channelMatrix[i] = 1.0f;
+                    }
+                   else
+                   {
+                       channelMatrix[i] = 0.0f;
+                   }
+	            }
+            }
+            else  if (soundChannels == 2)
+            {
+                for (int i = 0; i < outCount; ++i)
+                {
+                    for (int n = 0; n < soundChannels; ++n)
+                    {
+                        //channelMatrix[i * soundChannels + n];
+                    }
+                    if(channelMap[i]==leftChannel)
+                    {
+                        channelMatrix[i * 2 + 0] = 1.0f;
+                        channelMatrix[i * 2 + 1] = 0.0f;
+                    }
+                    else if(channelMap[i]==rightChannel)
+                    {
+                        channelMatrix[i * 2 + 0] = 0.0f;
+                        channelMatrix[i * 2 + 1] = 1.0f;
+                    }
+                    else
+                    {
+                        channelMatrix[i * 2 + 0] = 0.0f;
+                        channelMatrix[i * 2 + 1] = 0.0f;
+                    }
+                }
             }
             else
             {
-				switch (dd.OutputFormat.Format.nChannels)
-				{
-                //Speaker   Left Source           Right Source
-				case 2://2.0
-                    /*Front L*/	
-                    if (leftChannel == SPEAKER_FRONT_LEFT)
-                        matrix[0] = matrix[1] = 1.0000f;
-                    else 
-                        matrix[0] = matrix[1] = 0.0000f;
-                    /*Front R*/	
-                    if (rightChannel == SPEAKER_FRONT_RIGHT)
-                        matrix[2] = matrix[3] = 1.0f;
-                    else 
-                        matrix[2] = matrix[3] = 0.0f;
-					break;
-				case 4: // 4.0
-					
-					/*Front L*/	
-                    matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
-					/*Front R*/	
-                    matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
-					/*Back  L*/	
-                    matrix[4] = 1.0000f;  matrix[5] = 0.0000f;
-					/*Back  R*/	
-                    matrix[6] = 0.0000f;  matrix[7] = 1.0000f;
-					break;
-				case 5: // 5.0
-					//Speaker \ Left Source           Right Source
-					/*Front L*/	
-                    matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
-					/*Front R*/	
-                    matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
-					/*Front C*/	
-                    matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
-					/*Side  L*/	
-                    matrix[6] = 1.0000f;  matrix[7] = 0.0000f;
-					/*Side  R*/	
-                    matrix[8] = 0.0000f;  matrix[9] = 1.0000f;
-					break;
-				case 6: // 5.1
-					//Speaker \ Left Source           Right Source
-					/*Front L*/	matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
-					/*Front R*/	matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
-					/*Front C*/	matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
-					/*LFE    */	matrix[6] = 0.0000f;  matrix[7] = 0.0000f;
-					/*Side  L*/	matrix[8] = 1.0000f;  matrix[9] = 0.0000f;
-					/*Side  R*/	matrix[10] = 0.0000f;  matrix[11] = 1.0000f;
-					break;
-				case 7: // 6.1
-					//Speaker \ Left Source           Right Source
-					/*Front L*/	matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
-					/*Front R*/	matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
-					/*Front C*/	matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
-					/*LFE    */	matrix[6] = 0.0000f;  matrix[7] = 0.0000f;
-					/*Side  L*/	matrix[8] = 1.0000f;  matrix[9] = 0.0000f;
-					/*Side  R*/	matrix[10] = 0.0000f;  matrix[11] = 1.0000f;
-					/*Back  C*/	matrix[12] = 0.7071f;  matrix[13] = 0.7071f;
-					break;
-				case 8: // 7.1
-					//Speaker \ Left Source           Right Source
-					/*Front L*/	matrix[0] = 1.0000f;  matrix[1] = 0.0000f;
-					/*Front R*/	matrix[2] = 0.0000f;  matrix[3] = 1.0000f;
-					/*Front C*/	matrix[4] = 0.7071f;  matrix[5] = 0.7071f;
-					/*LFE    */	matrix[6] = 0.0000f;  matrix[7] = 0.0000f;
-					/*Back  L*/	matrix[8] = 1.0000f;  matrix[9] = 0.0000f;
-					/*Back  R*/	matrix[10] = 0.0000f;  matrix[11] = 1.0000f;
-					/*Side  L*/	matrix[12] = 1.0000f;  matrix[13] = 0.0000f;
-					/*Side  R*/	matrix[14] = 0.0000f;  matrix[15] = 1.0000f;
-					break;
-				default:
-					matrixAvailable = false;
-					break;
-				}
+                for (int i = 0; i < outCount; ++i)
+                {
+                    if (channelMap[i] == leftChannel || channelMap[i] == rightChannel)
+                    {
+                        for (int n = 0; n < soundChannels; ++n)
+                        {
+                            channelMatrix[i * soundChannels + n]=1.0f;
+                        }
+                    }
+                    else
+                    {
+                        for (int n = 0; n < soundChannels; ++n)
+                        {
+                            channelMatrix[i * soundChannels + n] = 0.0f;
+                        }
+                    }
+                }
             }
-            
-        }       
+            if (matrixAvailable)
+                source->SetOutputMatrix(nullptr, soundChannels, outCount, channelMatrix);
+        }
     }
 
     void SoundObject::apply3D()

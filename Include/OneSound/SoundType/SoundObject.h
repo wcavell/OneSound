@@ -28,6 +28,7 @@ namespace onesnd
         X3DAUDIO_EMITTER Emitter;			// 3D sound emitter data (this object) 
         UINT32 leftChannel;
         UINT32 rightChannel;
+        UINT32* channelMap;
         /**
         * Creates an uninitialzed empty SoundObject
         */

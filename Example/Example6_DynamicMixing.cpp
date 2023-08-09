@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Example 6 "DynamicMixing" for OneSound.
  * Copyright ⓒ 2018 Valentyn Bondarenko. All rights reserved.
  * License: https://github.com/weelhelmer/OneSound/master/LICENSE
@@ -60,6 +60,7 @@ int main()
             if (isKeyDown('2'))
             {
                 auto sound_2 = make_shared<Sound2D>(buffers[1]);
+                //sound_2->setOutChannel(0, SPEAKER_FRONT_RIGHT);
                 sound_2->play(); // It can be played anywhere.
 
                 active_sounds.push_back(sound_2);
