@@ -58,14 +58,14 @@ namespace onesnd
 
     SoundObject::~SoundObject()
     {  
-        if (channelMatrix != nullptr)
+        if (channelMatrix)
         {
-            free(channelMatrix);
+            delete[] channelMatrix;
             channelMatrix = nullptr;
         }
-        if(channelMap!=nullptr)
+        if(channelMap)
         {
-            free(channelMap);
+            delete[] channelMap;
             channelMap = nullptr;
         }
         if (sound) 
@@ -292,13 +292,14 @@ namespace onesnd
             XAUDIO2_DEVICE_DETAILS dd;
             ZeroMemory(&dd, sizeof(dd));
             XAudio2Device::instance().getEngine()->GetDeviceDetails(0, &dd);
-            channelMatrix = (float*)malloc(sizeof(float) * sound->Channels() * dd.OutputFormat.Format.nChannels); 
+        	outChannelCount = dd.OutputFormat.Format.nChannels;
+        	if (soundChannel == 0)
+                soundChannel = sound->Channels();
+            channelMatrix =new float[soundChannel * outChannelCount];          
+            channelMap = new uint32_t[outChannelCount];
             bool matrixAvailable = true;
-            uint16_t outCount = dd.OutputFormat.Format.nChannels;
-            int soundChannels = sound->Channels();
-            channelMap = (UINT32*)malloc(sizeof(UINT32) * dd.OutputFormat.Format.nChannels);
 
-            switch (dd.OutputFormat.Format.nChannels)
+            switch (outChannelCount)
             { 
                 //Speaker   Left Source           Right Source
             case 2://2.0 
@@ -354,73 +355,85 @@ namespace onesnd
                 matrixAvailable = false;
                 break;
             }
-            if (soundChannels == 1) 
+            if(matrixAvailable)
             {
-	            for (int i = 0; i < outCount; ++i)
-	            {
-                    if (channelMap[i] == leftChannel || channelMap[i] == rightChannel)
-                    {
-                        channelMatrix[i] = 1.0f;
-                    }
-                   else
-                   {
-                       channelMatrix[i] = 0.0f;
-                   }
-	            }
+                setOutChannelVolume(1.0f, 1.0f);
             }
-            else  if (soundChannels == 2)
-            {
-                for (int i = 0; i < outCount; ++i)
-                {
-                    for (int n = 0; n < soundChannels; ++n)
-                    {
-                        //channelMatrix[i * soundChannels + n];
-                    }
-                    if(channelMap[i]==leftChannel)
-                    {
-                        channelMatrix[i * 2 + 0] = 1.0f;
-                        channelMatrix[i * 2 + 1] = 0.0f;
-                    }
-                    else if(channelMap[i]==rightChannel)
-                    {
-                        channelMatrix[i * 2 + 0] = 0.0f;
-                        channelMatrix[i * 2 + 1] = 1.0f;
-                    }
-                    else
-                    {
-                        channelMatrix[i * 2 + 0] = 0.0f;
-                        channelMatrix[i * 2 + 1] = 0.0f;
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < outCount; ++i)
-                {
-                    if (channelMap[i] == leftChannel || channelMap[i] == rightChannel)
-                    {
-                        for (int n = 0; n < soundChannels; ++n)
-                        {
-                            channelMatrix[i * soundChannels + n]=1.0f;
-                        }
-                    }
-                    else
-                    {
-                        for (int n = 0; n < soundChannels; ++n)
-                        {
-                            channelMatrix[i * soundChannels + n] = 0.0f;
-                        }
-                    }
-                }
-            }
-            if (matrixAvailable)
-                source->SetOutputMatrix(nullptr, soundChannels, outCount, channelMatrix);
         }
     }
-
-    void SoundObject::apply3D()
+    void SoundObject::setOutChannelVolume(const float& leftVolume, const float& rightVolume)
     {
-	    
+        if (soundChannel == 1)
+        {
+            for (int i = 0; i < outChannelCount; ++i)
+            {
+                if (channelMap[i] == leftChannel)
+                {
+                    channelMatrix[i] = leftVolume;
+                }
+                else if (channelMap[i] == rightChannel)
+                {
+                    channelMatrix[i] = rightVolume;
+                }
+                else
+                {
+                    channelMatrix[i] = 0.0f;
+                }
+            }
+        }
+        else  if (soundChannel == 2)
+        {
+            for (int i = 0; i < outChannelCount; ++i)
+            {
+                for (int n = 0; n < 2; ++n)
+                {
+                    //channelMatrix[i * soundChannels + n];
+                }
+                if (channelMap[i] == leftChannel)
+                {
+                    channelMatrix[i * 2 + 0] = 1.0f;
+                    channelMatrix[i * 2 + 1] = 0.0f;
+                }
+                else if (channelMap[i] == rightChannel)
+                {
+                    channelMatrix[i * 2 + 0] = 0.0f;
+                    channelMatrix[i * 2 + 1] = rightVolume;
+                }
+                else
+                {
+                    channelMatrix[i * 2 + 0] = 0.0f;
+                    channelMatrix[i * 2 + 1] = 0.0f;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < outChannelCount; ++i)
+            {
+                if (channelMap[i] == leftChannel)
+                {
+                    for (int n = 0; n < soundChannel; ++n)
+                    {
+                        channelMatrix[i * soundChannel + n] = 1.0f;
+                    }
+                }
+                else if (channelMap[i] == rightChannel)
+                {
+                    for (int n = 0; n < soundChannel; ++n)
+                    {
+                        channelMatrix[i * soundChannel + n] = 1.0f;
+                    }
+                }
+                else
+                {
+                    for (int n = 0; n < soundChannel; ++n)
+                    {
+                        channelMatrix[i * soundChannel + n] = 0.0f;
+                    }
+                }
+            }
+        }
+        source->SetOutputMatrix(nullptr, soundChannel, outChannelCount, channelMatrix);
     }
 
 }

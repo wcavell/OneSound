@@ -10,6 +10,7 @@
 
 #include "..\ThirdParty\Include\XAudio2_7\XAudio2.h"
 #include "..\ThirdParty\Include\XAudio2_7\X3DAudio.h"
+#include "..\ThirdParty\Include\XAudio2_7\xact3d3.h"
 
 #if defined (_WIN64)
 #   pragma comment(lib, "X3DAudio64.lib")

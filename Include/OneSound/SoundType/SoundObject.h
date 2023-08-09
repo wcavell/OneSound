@@ -26,9 +26,12 @@ namespace onesnd
         SoundObjectState* state;			// Holds and manages the current state of a SoundObject
         float* channelMatrix;
         X3DAUDIO_EMITTER Emitter;			// 3D sound emitter data (this object) 
-        UINT32 leftChannel;
-        UINT32 rightChannel;
-        UINT32* channelMap;
+        uint32_t leftChannel;
+        uint32_t rightChannel;
+        uint32_t* channelMap;
+        uint32_t outChannelCount;
+        uint32_t soundChannel;
+
         /**
         * Creates an uninitialzed empty SoundObject
         */
@@ -163,11 +166,9 @@ namespace onesnd
         * 设置声道输出映射
         */
         void setOutChannel(const uint32_t& speakerLeftChannel,const uint32_t& speakerRightChannel);
-        /*
-         * 设置3D效果
-         */
-        void apply3D();
-        void update3D();
 
+    protected:
+        void setOutChannelVolume(const float& leftVolume, const float& rightVolume);
+         
     };
 }

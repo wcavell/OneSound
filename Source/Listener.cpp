@@ -10,6 +10,17 @@
 
 namespace onesnd
 {
+    Listener::Listener()
+    {
+        X3DAUDIO_LISTENER m_listener;
+        ZeroMemory(&m_listener, sizeof(X3DAUDIO_LISTENER));
+        xListener = &m_listener;
+    }
+    Listener::~Listener()
+    {
+        xListener = nullptr;
+    }
+
     void Listener::setVolume(float volume)
     {
         if (volume < 0.f)
@@ -27,4 +38,11 @@ namespace onesnd
         
         return value;
     }
+    void Listener::setPositionOrientation(const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front)
+    {
+        xListener->Position = position;
+        xListener->OrientTop = top;
+        xListener->OrientFront = front;
+    }
+
 }
