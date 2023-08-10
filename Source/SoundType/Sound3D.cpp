@@ -44,4 +44,9 @@ namespace onesnd
         XACT3DCalculate(handle, listener, &Emitter, &dspSettings);
         setOutChannelVolume(dspSettings.pMatrixCoefficients[0], dspSettings.pMatrixCoefficients[1]);
     }
+    void Sound3D::onSoundChanged()
+    {
+	    
+    }
+
 }

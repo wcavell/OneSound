@@ -25,13 +25,13 @@ namespace onesnd
         leftChannel(0), 
         rightChannel(0),
 		channelMap(nullptr),
-        soundChannel(0),
-        outChannelCount(0)
+        outChannelCount(0),
+        soundChannel(0),matrixAvailable(false)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
         Emitter.CurveDistanceScaler = FLT_MIN;
-        
+        setChannelMap();
     }
 
     SoundObject::SoundObject(const std::shared_ptr<SoundBuffer>& sound, const bool& looping, const bool& playing, const float& volume) :
@@ -41,9 +41,9 @@ namespace onesnd
         channelMatrix(nullptr),
         leftChannel(0),
         rightChannel(0),
-        soundChannel(0),
-		channelMap(nullptr),
-        outChannelCount(0)
+        channelMap(nullptr),
+		outChannelCount(0),
+        soundChannel(0), matrixAvailable(false)
     {
         memset(&Emitter, 0, sizeof(Emitter));
         Emitter.ChannelCount = 1;
@@ -58,6 +58,8 @@ namespace onesnd
 
         if (playing)
             play();
+
+        setChannelMap();
     }
 
     SoundObject::~SoundObject()
@@ -105,7 +107,10 @@ namespace onesnd
             state->isLoopable = loop;
             state->isPaused = false;           
             sound = sound_buf; // set new Sound
-            setVolume(volume); 
+            setVolume(volume);
+            if (soundChannel == 0)
+                soundChannel = sound->Channels();
+            onSoundChanged();
         }
     }
 
@@ -293,72 +298,10 @@ namespace onesnd
         rightChannel = speakerRightChannel;
         if (sound)
         {
-            XAUDIO2_DEVICE_DETAILS dd;
-            ZeroMemory(&dd, sizeof(dd));
-            XAudio2Device::instance().getEngine()->GetDeviceDetails(0, &dd);
-        	outChannelCount = dd.OutputFormat.Format.nChannels;
-        	if (soundChannel == 0)
-                soundChannel = sound->Channels();
-            channelMatrix =new float[soundChannel * outChannelCount];          
-            channelMap = new uint32_t[outChannelCount];
-            bool matrixAvailable = true;
+        	
 
-            switch (outChannelCount)
-            { 
-                //Speaker   Left Source           Right Source
-            case 2://2.0 
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                break;
-            case 3:
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                channelMap[2] = SPEAKER_LOW_FREQUENCY;
-                break;
-            case 4: // 4.0 
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                channelMap[2] = SPEAKER_BACK_LEFT;
-                channelMap[3] = SPEAKER_BACK_RIGHT;
-                break;
-            case 5: // 5.0  
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                channelMap[2] = SPEAKER_LOW_FREQUENCY;
-                channelMap[3] = SPEAKER_SIDE_LEFT;
-                channelMap[4] = SPEAKER_SIDE_RIGHT;
-                break;
-            case 6: // 5.1 
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                channelMap[2] = SPEAKER_FRONT_CENTER;
-                channelMap[3] = SPEAKER_LOW_FREQUENCY;
-                channelMap[4] = SPEAKER_SIDE_LEFT;
-                channelMap[5] = SPEAKER_SIDE_RIGHT;
-                break;
-            case 7: // 6.1 
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                channelMap[2] = SPEAKER_FRONT_CENTER;
-                channelMap[3] = SPEAKER_LOW_FREQUENCY;
-                channelMap[4] = SPEAKER_SIDE_LEFT;
-                channelMap[5] = SPEAKER_SIDE_RIGHT;
-                channelMap[6] = SPEAKER_BACK_CENTER;
-                break;
-            case 8: // 7.1 
-                channelMap[0] = SPEAKER_FRONT_LEFT;
-                channelMap[1] = SPEAKER_FRONT_RIGHT;
-                channelMap[2] = SPEAKER_FRONT_CENTER;
-                channelMap[3] = SPEAKER_LOW_FREQUENCY;
-                channelMap[4] = SPEAKER_BACK_LEFT;
-                channelMap[5] = SPEAKER_BACK_RIGHT;
-                channelMap[6] = SPEAKER_SIDE_LEFT;
-                channelMap[7] = SPEAKER_SIDE_RIGHT;
-                break;
-            default:
-                matrixAvailable = false;
-                break;
-            }
+			channelMatrix =new float[soundChannel * outChannelCount]; 
+           
             if(matrixAvailable)
             {
                 setOutChannelVolume(1.0f, 1.0f);
@@ -442,4 +385,72 @@ namespace onesnd
     void SoundObject::setSoundChannel(const int& channel) {
         soundChannel = channel;
     }
+    void SoundObject::onSoundChanged()
+    {
+	    
+    }
+    void SoundObject::setChannelMap()
+    {
+        outChannelCount = XAudio2Device::instance().getChannelCount();
+        channelMap = new uint32_t[outChannelCount];
+        matrixAvailable = true;
+
+        switch (outChannelCount)
+        {
+            //Speaker   Left Source           Right Source
+        case 2://2.0 
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            break;
+        case 3:
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            channelMap[2] = SPEAKER_LOW_FREQUENCY;
+            break;
+        case 4: // 4.0 
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            channelMap[2] = SPEAKER_BACK_LEFT;
+            channelMap[3] = SPEAKER_BACK_RIGHT;
+            break;
+        case 5: // 5.0  
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            channelMap[2] = SPEAKER_LOW_FREQUENCY;
+            channelMap[3] = SPEAKER_SIDE_LEFT;
+            channelMap[4] = SPEAKER_SIDE_RIGHT;
+            break;
+        case 6: // 5.1 
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            channelMap[2] = SPEAKER_FRONT_CENTER;
+            channelMap[3] = SPEAKER_LOW_FREQUENCY;
+            channelMap[4] = SPEAKER_SIDE_LEFT;
+            channelMap[5] = SPEAKER_SIDE_RIGHT;
+            break;
+        case 7: // 6.1 
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            channelMap[2] = SPEAKER_FRONT_CENTER;
+            channelMap[3] = SPEAKER_LOW_FREQUENCY;
+            channelMap[4] = SPEAKER_SIDE_LEFT;
+            channelMap[5] = SPEAKER_SIDE_RIGHT;
+            channelMap[6] = SPEAKER_BACK_CENTER;
+            break;
+        case 8: // 7.1 
+            channelMap[0] = SPEAKER_FRONT_LEFT;
+            channelMap[1] = SPEAKER_FRONT_RIGHT;
+            channelMap[2] = SPEAKER_FRONT_CENTER;
+            channelMap[3] = SPEAKER_LOW_FREQUENCY;
+            channelMap[4] = SPEAKER_BACK_LEFT;
+            channelMap[5] = SPEAKER_BACK_RIGHT;
+            channelMap[6] = SPEAKER_SIDE_LEFT;
+            channelMap[7] = SPEAKER_SIDE_RIGHT;
+            break;
+        default:
+            matrixAvailable = false;
+            break;
+        }
+    }
+
 }

@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "OneSound\Export.h"
 #include "OneSound\XAudio2Device.h"
 
@@ -29,7 +31,10 @@ namespace onesnd
         X3DAUDIO_LISTENER* getListener() const { return xListener; } 
         void setPositionOrientation(const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front);
         void setListenerVelocity(const X3DAUDIO_VECTOR& velocity);
+        void setListenerChannel(const uint32_t& leftChannel, const uint32_t& rightChannel);
     private:
         X3DAUDIO_LISTENER* xListener;
+        uint32_t leftChannel;
+        uint32_t rightChannel;
     };
 }

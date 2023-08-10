@@ -26,6 +26,11 @@ namespace onesnd
         XAudio2Create(&xEngine, flags);
         xEngine->CreateMasteringVoice(&xMaster, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE);
         X3DAudioInitialize(SPEAKER_STEREO, X3DAUDIO_SPEED_OF_SOUND, x3DAudioHandle);
+
+        XAUDIO2_DEVICE_DETAILS dd;
+        ZeroMemory(&dd, sizeof(dd));
+        xEngine->GetDeviceDetails(0, &dd);
+        channelCount = dd.OutputFormat.Format.nChannels;
     }
 
     void XAudio2Device::finalize()

@@ -80,6 +80,14 @@ extern "C"
 		Sound2D* sound = new Sound2D(ptr, loop, play, volume);
 		return sound;
 	}
+	ONE_SOUND_API uint32_t Sound2d_GetChannelMask(Sound2D* sound)
+	{
+		return sound->getChannelMask();
+	}
+	ONE_SOUND_API void Sound2D_SetChannelMask(Sound2D* sound,uint32_t mask)
+	{
+		sound->setChannelMask(mask);
+	}
 	ONE_SOUND_API void Sound2D_Destroy(Sound2D* sound)
 	{
 		delete sound;

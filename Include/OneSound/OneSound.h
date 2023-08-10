@@ -71,6 +71,8 @@ extern "C" {
 
     ONE_SOUND_API Sound2D* Sound2D_Create();
     ONE_SOUND_API Sound2D* Sound2D_Create_ByBuffer(SoundBuffer* buff, bool loop, bool play, float volume);
+    ONE_SOUND_API uint32_t Sound2d_GetChannelMask(Sound2D* sound);
+    ONE_SOUND_API void Sound2D_SetChannelMask(Sound2D* sound,uint32_t mask);
     ONE_SOUND_API void Sound2D_Destroy(Sound2D* sound);
 
     ONE_SOUND_API Sound3D* Sound3D_Create();

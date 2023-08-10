@@ -29,6 +29,7 @@ namespace onesnd
 		*/
         void apply3D(X3DAUDIO_LISTENER* xListener);
         void setSourcePosition(const X3DAUDIO_VECTOR& position);
-        void update3D(); 
+        void update3D();
+        void onSoundChanged() override;
     };
 }

@@ -9,8 +9,24 @@
 namespace onesnd
 {
     Sound2D::Sound2D() : SoundObject()
-    { }
+	,channelMask(0)
+
+    {
+    }
 
     Sound2D::Sound2D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop, const bool& play, const float& volume) : SoundObject(sound, loop, play, volume)
-    { }
+	, channelMask(0)
+    {
+	    
+    }
+    void Sound2D::onSoundChanged()
+    {
+
+    }
+    void Sound2D::setChannelMask(const uint32_t& mask)
+    {
+        channelMask = mask;
+    }
+
+ 
 }

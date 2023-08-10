@@ -281,6 +281,16 @@ namespace OneSound
         {
              OneAPI.Sound2D_Destroy(handle);
         }
+
+        public Speaker GetChannelMask()
+        {
+            return OneAPI.Sound2d_GetChannelMask(Handle);
+        }
+
+        public void SetChannelMask(Speaker mask)
+        {
+            OneAPI.Sound2D_SetChannelMask(Handle,mask);
+        }
     }
 
     public class Sound3D : SoundObject
@@ -375,6 +385,11 @@ namespace OneSound
         [DllImport(dllName)]
         public static extern IntPtr Sound3D_Create_ByBuffer(IntPtr buff /*SoundBuffer/SoundStream*/, bool loop,
             bool play, float volume);
+
+        [DllImport(dllName)]
+        public static extern Speaker Sound2d_GetChannelMask(IntPtr sound);
+        [DllImport(dllName)]
+        public static extern void Sound2D_SetChannelMask(IntPtr sound, Speaker mask);
 
         [DllImport(dllName)]
         public static extern void Sound3D_Apply3D(IntPtr handle, IntPtr listener);

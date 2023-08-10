@@ -171,6 +171,10 @@ namespace onesnd
 
     protected:
         void setOutChannelVolume(const float& leftVolume, const float& rightVolume);
-         
+        virtual void onSoundChanged();
+
+    private:
+        void setChannelMap();
+        bool matrixAvailable;
     };
 }

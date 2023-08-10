@@ -42,12 +42,13 @@ namespace onesnd
 
         IXAudio2* getEngine() const { return xEngine; }
         IXAudio2MasteringVoice* getMaster() const { return xMaster; }
+        unsigned int getChannelCount() const { return channelCount; }
     public:
         X3DAUDIO_HANDLE x3DAudioHandle;
     private:
         IXAudio2* xEngine;
         IXAudio2MasteringVoice* xMaster;
-        
+        unsigned int channelCount;
         X3DAUDIO_LISTENER xListener;
     };
     
