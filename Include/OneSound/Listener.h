@@ -28,6 +28,7 @@ namespace onesnd
         float getVolume() const;
         X3DAUDIO_LISTENER* getListener() const { return xListener; } 
         void setPositionOrientation(const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front);
+        void setListenerVelocity(const X3DAUDIO_VECTOR& velocity);
     private:
         X3DAUDIO_LISTENER* xListener;
     };

@@ -1,8 +1,6 @@
 #include "OneSound\Export.h"
 #include "OneSound\OneSound.h"
-#include "OneSound\SoundType\Sound3D.h"
 
-#define WINAPI      __stdcall
 using namespace onesnd;
 extern "C"
 {
@@ -10,6 +8,22 @@ extern "C"
 	{
 		OneSound* one = new OneSound();
 		return one;
+	}
+	ONE_SOUND_API unsigned long long OneSound_GetLibraryVersion(OneSound* one)
+	{
+		return one->getLibraryVersion();
+	}
+	ONE_SOUND_API char* OneSound_GetLibraryVersionStr(OneSound* one)
+	{
+		return one->getLibraryVersionStr().data();
+	}
+	ONE_SOUND_API char* OneSound_GetLibraryStatus(OneSound* one)
+	{
+		return  one->getLibraryStatus().data();
+	}
+	ONE_SOUND_API char* OneSound_GetLibraryName(OneSound* one)
+	{
+		return one->getLibraryName().data();
 	}
 	ONE_SOUND_API void OneSound_Destroy(OneSound* one)
 	{

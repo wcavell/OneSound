@@ -52,6 +52,11 @@ namespace onesnd
 
 extern "C" {
     ONE_SOUND_API OneSound* OneSound_Create();
+    ONE_SOUND_API unsigned long long OneSound_GetLibraryVersion(OneSound* one);
+    ONE_SOUND_API char* OneSound_GetLibraryVersionStr(OneSound* one);
+    ONE_SOUND_API char* OneSound_GetLibraryStatus(OneSound* one);
+    ONE_SOUND_API char* OneSound_GetLibraryName(OneSound* one);
+
     ONE_SOUND_API void OneSound_Destroy(OneSound* one);
 
     ONE_SOUND_API SoundBuffer* SoundBuffer_Create();

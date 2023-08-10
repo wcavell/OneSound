@@ -12,9 +12,9 @@ namespace Managed
         static void Main(string[] args)
         {
             var engine = new OneSound.SoundEngine();
-            var buff = new SoundBuffer("D:\\Datas\\Music\\song\\ai.mini-遇.mp3");
-            var sound = new Sound2D(buff,false,true,1f);
-            //sound.SetSound(buff,false,true,1f);
+            var buff = new SoundBuffer("Sound\\voice.mp3");
+            var sound = new Sound2D(buff,false,true,1f); 
+            sound.SetOutChannel(Speaker.None,Speaker.FrontRight);
             Console.Read();
         }
     }

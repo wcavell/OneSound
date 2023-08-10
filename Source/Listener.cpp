@@ -44,5 +44,10 @@ namespace onesnd
         xListener->OrientTop = top;
         xListener->OrientFront = front;
     }
+    void Listener::setListenerVelocity(const X3DAUDIO_VECTOR& velocity)
+    {
+        xListener->Velocity = velocity;
+    }
+
 
 }
