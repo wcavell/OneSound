@@ -36,13 +36,13 @@ namespace onesnd
 
     void Sound3D::setSourcePosition(const X3DAUDIO_VECTOR& position)
     {
-        Emitter.Position = position;
+        emitter.Position = position;
     }
     void Sound3D::update3D()
     {
         auto handle = XAudio2Device::instance().x3DAudioHandle;
-        XACT3DCalculate(handle, listener, &Emitter, &dspSettings);
-        setOutChannelVolume(dspSettings.pMatrixCoefficients[0], dspSettings.pMatrixCoefficients[1]);
+        XACT3DCalculate(handle, listener, &emitter, &dspSettings);
+        //setOutChannelVolume(dspSettings.pMatrixCoefficients[0], dspSettings.pMatrixCoefficients[1]);
     }
     void Sound3D::onSoundChanged()
     {

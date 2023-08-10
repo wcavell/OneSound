@@ -19,13 +19,15 @@ namespace onesnd
        ~Sound2D() = default;
 
         Sound2D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
-        void onSoundChanged() override;
+        virtual void onSoundChanged() override;
         void setChannelMask(const uint32_t& mask);
-        uint32_t getChannelMask() const
-        {
+        void setMaskVolume(float* volume, int count);
+        uint32_t getChannelMask() const{
             return  channelMask;
         }
     private:
         uint32_t channelMask;
+        float* maskVolume;
+        int maskCount;
     };
 }

@@ -24,10 +24,7 @@ namespace onesnd
 
     int32_t OneSound::getOutputChannels() const
     {
-        XAUDIO2_DEVICE_DETAILS dd;
-        ZeroMemory(&dd, sizeof(dd));
-        XAudio2Device::instance().getEngine()->GetDeviceDetails(0, &dd);
-        return dd.OutputFormat.Format.nChannels;
+        return XAudio2Device::instance().getChannelCount();
     }
 
     OneSound::~OneSound()

@@ -31,5 +31,6 @@ namespace onesnd
         void setSourcePosition(const X3DAUDIO_VECTOR& position);
         void update3D();
         void onSoundChanged() override;
+        void addChannelGroup(); 
     };
 }

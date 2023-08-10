@@ -56,7 +56,7 @@ extern "C" {
     ONE_SOUND_API char* OneSound_GetLibraryVersionStr(OneSound* one);
     ONE_SOUND_API char* OneSound_GetLibraryStatus(OneSound* one);
     ONE_SOUND_API char* OneSound_GetLibraryName(OneSound* one);
-
+    ONE_SOUND_API int32_t OneSound_GetOutputChannels(OneSound* one);
     ONE_SOUND_API void OneSound_Destroy(OneSound* one);
 
     ONE_SOUND_API SoundBuffer* SoundBuffer_Create();

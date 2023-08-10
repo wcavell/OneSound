@@ -21,16 +21,14 @@ namespace onesnd
         sound(nullptr), 
         source(nullptr), 
         state(nullptr),
-        channelMatrix(nullptr),
-        leftChannel(0), 
-        rightChannel(0),
+        channelMatrix(nullptr), 
 		channelMap(nullptr),
         outChannelCount(0),
         soundChannel(0),matrixAvailable(false)
     {
-        memset(&Emitter, 0, sizeof(Emitter));
-        Emitter.ChannelCount = 1;
-        Emitter.CurveDistanceScaler = FLT_MIN;
+        memset(&emitter, 0, sizeof(X3DAUDIO_EMITTER));
+        emitter.ChannelCount = 1;
+        emitter.CurveDistanceScaler = FLT_MIN;
         setChannelMap();
     }
 
@@ -38,16 +36,14 @@ namespace onesnd
         sound(nullptr), 
         source(nullptr), 
         state(nullptr),
-        channelMatrix(nullptr),
-        leftChannel(0),
-        rightChannel(0),
+        channelMatrix(nullptr), 
         channelMap(nullptr),
 		outChannelCount(0),
         soundChannel(0), matrixAvailable(false)
     {
-        memset(&Emitter, 0, sizeof(Emitter));
-        Emitter.ChannelCount = 1;
-        Emitter.CurveDistanceScaler = FLT_MIN;
+        memset(&emitter, 0, sizeof(X3DAUDIO_EMITTER));
+        emitter.ChannelCount = 1;
+        emitter.CurveDistanceScaler = FLT_MIN;
 
         if (sound)
             setSound(sound); 
@@ -292,22 +288,7 @@ namespace onesnd
     {
         return sound ? sound->Frequency() : 0;
     } 
-    void SoundObject::setOutChannel(const uint32_t& speakerLeftChannel, const uint32_t& speakerRightChannel)
-    {
-        leftChannel = speakerLeftChannel;
-        rightChannel = speakerRightChannel;
-        if (sound)
-        {
-        	
-
-			channelMatrix =new float[soundChannel * outChannelCount]; 
-           
-            if(matrixAvailable)
-            {
-                setOutChannelVolume(1.0f, 1.0f);
-            }
-        }
-    }
+   /*
     void SoundObject::setOutChannelVolume(const float& leftVolume, const float& rightVolume)
     {
         if (soundChannel == 1)
@@ -382,12 +363,17 @@ namespace onesnd
         }
         source->SetOutputMatrix(nullptr, soundChannel, outChannelCount, channelMatrix);
     }
-    void SoundObject::setSoundChannel(const int& channel) {
-        soundChannel = channel;
+    */
+    void SoundObject::setSoundChannel(const int& channel) {       
     }
     void SoundObject::onSoundChanged()
     {
-	    
+        if (channelMatrix)
+        {
+            delete[] channelMatrix;
+            channelMatrix = nullptr;
+        }
+        channelMatrix = new float[soundChannel * outChannelCount];
     }
     void SoundObject::setChannelMap()
     {

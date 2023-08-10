@@ -25,6 +25,9 @@ extern "C"
 	{
 		return one->getLibraryName().data();
 	}
+	ONE_SOUND_API int32_t OneSound_GetOutputChannels(OneSound* one) {
+		return one->getOutputChannels();
+	}
 	ONE_SOUND_API void OneSound_Destroy(OneSound* one)
 	{
 		delete one;
@@ -182,9 +185,9 @@ extern "C"
 	ONE_SOUND_API int SoundObject_GetSamplesPerSecond(SoundObject* so) {
 		return so->getSamplesPerSecond();
 	}
-	ONE_SOUND_API void SoundObject_SetOutChannel(SoundObject* so, uint32_t speakerLeftChannel, uint32_t speakerRightChannel) {
+	/*ONE_SOUND_API void SoundObject_SetOutChannel(SoundObject* so, uint32_t speakerLeftChannel, uint32_t speakerRightChannel) {
 		so->setOutChannel(speakerLeftChannel, speakerRightChannel);
-	}
+	}*/
 	ONE_SOUND_API void SoundObject_SetSoundChannel(SoundObject* so, int channel) {
 		so->setSoundChannel(channel);
 	}

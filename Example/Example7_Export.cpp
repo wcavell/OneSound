@@ -31,8 +31,10 @@ int main()
         // Any sound plays in another thread.
         //auto sound_1 = make_unique<Sound2D>(make_unique<SoundBuffer>("Sound\\shot.wav"),false,true,0.3f);
         auto sb = SoundBuffer_Create_ByPath("Sound\\Crysis 1.ogg");
-        auto sound = Sound2D_Create_ByBuffer(sb, false, true, 0.8f);
+        auto sound = Sound2D_Create_ByBuffer(sb, false, true, 0.8f); 
+
         //SoundObject_SetOutChannel(sound, 0, SPEAKER_FRONT_CENTER);
+        Sound2D_SetChannelMask(sound, SPEAKER_FRONT_RIGHT| SPEAKER_FRONT_CENTER);
         // The sound stream is good for the large effects like ambients, talks, unbreakable things.
         // NOTE: If we'll take a look at WAV formar then we'll see that it's not a good choice for streams.
         //       Many sounds file get decades of MBs for a few minutes.
