@@ -22,12 +22,12 @@ extern "C"
 		SoundBuffer* buffer = new SoundBuffer();
 		return buffer;
 	}
-	ONE_SOUND_API  SoundBuffer* SoundBuffer_Create_ByPath(const char* file)
+	ONE_SOUND_API  SoundBuffer* SoundBuffer_Create_ByPath(char* file)
 	{
 		SoundBuffer* buffer = new SoundBuffer(file);
 		return buffer;
 	}
-	ONE_SOUND_API  void SoundBuffer_Load(SoundBuffer* buffer, const char* file)
+	ONE_SOUND_API  void SoundBuffer_Load(SoundBuffer* buffer, char* file)
 	{
 		buffer->Load(file);
 	}
@@ -41,12 +41,12 @@ extern "C"
 		SoundStream* stream = new SoundStream();
 		return stream;
 	}
-	ONE_SOUND_API SoundStream* SoundStream_Create_ByPath(const char* file)
+	ONE_SOUND_API SoundStream* SoundStream_Create_ByPath(char* file)
 	{
 		SoundStream* stream = new SoundStream(file);
 		return stream;
 	}
-	ONE_SOUND_API  void SoundStream_Load(SoundStream* stream, const char* file)
+	ONE_SOUND_API  void SoundStream_Load(SoundStream* stream, char* file)
 	{
 		stream->Load(file);
 	}
@@ -60,9 +60,9 @@ extern "C"
 		Sound2D* sound = new Sound2D();
 		return sound;
 	}
-	ONE_SOUND_API Sound2D* Sound2D_Create_ByBuffer(SoundBuffer* buff, const bool& loop, const bool& play, const float& volume)
+	ONE_SOUND_API Sound2D* Sound2D_Create_ByBuffer(SoundBuffer* buff, bool loop, bool play, float volume)
 	{
-		const std::shared_ptr<SoundBuffer> ptr(buff);
+		std::shared_ptr<SoundBuffer> ptr(buff);
 		Sound2D* sound = new Sound2D(ptr, loop, play, volume);
 		return sound;
 	}
@@ -76,16 +76,16 @@ extern "C"
 		Sound3D* sound = new Sound3D();
 		return sound;
 	}
-	ONE_SOUND_API Sound3D* Sound3D_Create_ByBuffer(SoundBuffer* buff, const bool& loop, const bool& play, const float& volume)
+	ONE_SOUND_API Sound3D* Sound3D_Create_ByBuffer(SoundBuffer* buff, bool loop, bool play, float volume)
 	{
-		const std::shared_ptr<SoundBuffer> ptr(buff);
+		std::shared_ptr<SoundBuffer> ptr(buff);
 		Sound3D* sound = new Sound3D(ptr, loop, play, volume);
 		return sound;
 	}
 	ONE_SOUND_API void Sound3D_Apply3D(Sound3D* sound, X3DAUDIO_LISTENER* xListener) {
 		sound->apply3D(xListener);
 	}
-	ONE_SOUND_API void Sound3D_SetSourcePosition(Sound3D* sound, const X3DAUDIO_VECTOR& position) {
+	ONE_SOUND_API void Sound3D_SetSourcePosition(Sound3D* sound, X3DAUDIO_VECTOR position) {
 		sound->setSourcePosition(position);
 	}
 	ONE_SOUND_API void Sound3D_Update3D(Sound3D* sound) {
@@ -97,9 +97,9 @@ extern "C"
 		sound = nullptr;
 	}
 
-	ONE_SOUND_API void SoundObject_SetSound(SoundObject* so, SoundBuffer* sound, const bool& loop, const bool& play, const float& volume)
+	ONE_SOUND_API void SoundObject_SetSound(SoundObject* so, SoundBuffer* sound, bool loop, bool play, float volume)
 	{
-		const std::shared_ptr<SoundBuffer> ptr(sound);
+		std::shared_ptr<SoundBuffer> ptr(sound);
 		so->setSound(ptr, loop, play, volume);
 	}
 	ONE_SOUND_API bool SoundObject_IsStreamable(SoundObject* so) {
@@ -111,7 +111,7 @@ extern "C"
 	ONE_SOUND_API void SoundObject_Play(SoundObject* so) {
 		so->play();
 	}
-	ONE_SOUND_API void SoundObject_PlaySound(SoundObject* so, SoundBuffer* sound, const bool& loop, const bool& play, const float& volume) {
+	ONE_SOUND_API void SoundObject_PlaySound(SoundObject* so, SoundBuffer* sound, bool loop, bool play, float volume) {
 		const std::shared_ptr<SoundBuffer> ptr(sound);
 		so->play(ptr, loop, play, volume);
 	}
@@ -139,10 +139,10 @@ extern "C"
 	ONE_SOUND_API bool SoundObject_IsLooping(SoundObject* so) {
 		return so->isLooping();
 	}
-	ONE_SOUND_API void SoundObject_SetLooping(SoundObject* so, const bool& looping) {
+	ONE_SOUND_API void SoundObject_SetLooping(SoundObject* so, bool looping) {
 		so->setLooping(looping);
 	}
-	ONE_SOUND_API void SoundObject_SetVolume(SoundObject* so, const float& gain) {
+	ONE_SOUND_API void SoundObject_SetVolume(SoundObject* so, float gain) {
 		so->setVolume(gain);
 	}
 	ONE_SOUND_API float SoundObject_GetVolume(SoundObject* so) {
@@ -160,10 +160,10 @@ extern "C"
 	ONE_SOUND_API int SoundObject_GetSamplesPerSecond(SoundObject* so) {
 		return so->getSamplesPerSecond();
 	}
-	ONE_SOUND_API void SoundObject_SetOutChannel(SoundObject* so, const uint32_t& speakerLeftChannel, const uint32_t& speakerRightChannel) {
+	ONE_SOUND_API void SoundObject_SetOutChannel(SoundObject* so, uint32_t speakerLeftChannel, uint32_t speakerRightChannel) {
 		so->setOutChannel(speakerLeftChannel, speakerRightChannel);
 	}
-	ONE_SOUND_API void SoundObject_SetSoundChannel(SoundObject* so, const int& channel) {
+	ONE_SOUND_API void SoundObject_SetSoundChannel(SoundObject* so, int channel) {
 		so->setSoundChannel(channel);
 	}
 
@@ -175,7 +175,7 @@ extern "C"
 		delete listener;
 		listener = nullptr;
 	}
-	ONE_SOUND_API void Listener_SetPositionOrientation(Listener* listener, const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front) {
+	ONE_SOUND_API void Listener_SetPositionOrientation(Listener* listener, X3DAUDIO_VECTOR position, X3DAUDIO_VECTOR top,  X3DAUDIO_VECTOR front) {
 		listener->setPositionOrientation(position, top, front);
 	}
 	ONE_SOUND_API X3DAUDIO_LISTENER* Listener_GetListener(Listener* listener) {

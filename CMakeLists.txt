@@ -114,7 +114,7 @@ ADD_TEST_PROJECT(Example7_Export ${FilesTest7})
 
 if (CMAKE_VERSION VERSION_GREATER 3.10)
   set_property(TARGET OneSound PROPERTY CXX_STANDARD 17)  
-  set_property(TARGET OneSound PROPERTY CXX_STANDARD_REQUIRED ON) 
+  set_property(TARGET OneSound PROPERTY CXX_STANDARD_REQUIRED ON)  
 endif()
 
 
