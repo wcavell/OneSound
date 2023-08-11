@@ -26,7 +26,7 @@ namespace onesnd
     class XAudio2Device
     {
     public:
-        XAudio2Device() = default;
+        XAudio2Device();
        ~XAudio2Device() = default;
 
     public:
@@ -43,13 +43,26 @@ namespace onesnd
         IXAudio2* getEngine() const { return xEngine; }
         IXAudio2MasteringVoice* getMaster() const { return xMaster; }
         unsigned int getChannelCount() const { return channelCount; }
+        inline unsigned int getLeftSpeaker()const { return leftSpeaker; }
+        inline unsigned int getRightSpeaker()const { return  rightSpeaker; }         
+        void setLeftSpeaker(const unsigned int &lSpeaker)
+        {
+            leftSpeaker = lSpeaker;          
+        }
+        void setRightSpeaker(const unsigned int& rSpeaker)
+        {
+            rightSpeaker = rSpeaker;
+        }
     public:
-        X3DAUDIO_HANDLE x3DAudioHandle;
+        X3DAUDIO_HANDLE X3DInstance;
     private:
         IXAudio2* xEngine;
         IXAudio2MasteringVoice* xMaster;
         unsigned int channelCount;
         X3DAUDIO_LISTENER xListener;
+        unsigned int leftSpeaker;
+        unsigned int rightSpeaker;
+    	
     };
     
     struct XABuffer : XAUDIO2_BUFFER

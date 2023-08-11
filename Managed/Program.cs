@@ -13,12 +13,17 @@ namespace Managed
         {
             var engine = new OneSound.SoundEngine();
             var buff = new SoundBuffer("Sound\\voice.mp3");
-            var sound = new Sound2D(buff,false,true,1f); 
-            sound.SetChannelMask(Speaker.FrontLeft|Speaker.FrontRight);
-            var sp = sound.GetChannelMask();
-            //bool hasFlag = myFlagsEnum & _flagsEnum.Option1 != 0
-            sound.SetOutChannel(Speaker.None,Speaker.FrontRight);
+            var sound = new Sound2D(buff,false,true,1f);
+            sound.Speaker = Speaker.FrontLeft;
             Console.Read();
+            sound.Stop();
+            sound.Dispose();
+            buff.Dispose();
+            engine.Dispose();
+
+            Console.ReadLine();
+            Console.ReadLine();
+            Console.ReadLine();
         }
     }
 }

@@ -22,17 +22,29 @@ namespace onesnd
     {
 	    
     }
-   void Sound2D::onSoundChanged() 
+    Sound2D::~Sound2D()
+    {
+        if(maskVolume)
+        {
+            delete[] maskVolume;
+            maskVolume = nullptr;
+        }
+    }
+
+    void Sound2D::onSoundChanged()
     {
 
     }
-   void Sound2D::setMaskVolume(float* mask, int count) {
-       maskVolume = mask;
+   void Sound2D::setSpeakerVolume(float* volume, int count) {
+       maskVolume = volume;
        maskCount = count;
     }
-    void Sound2D::setChannelMask(const uint32_t& mask)
+    void Sound2D::setSpeaker(const uint32_t& speaker)
     {
-        channelMask = mask;
+        uint32_t lSpeaker = XAudio2Device::instance().getLeftSpeaker();
+        uint32_t rSpeaker = XAudio2Device::instance().getRightSpeaker();
+
+        channelMask = speaker;
         if (soundChannel == 1) {
             for (int i = 0; i < outChannelCount; ++i)
             {
@@ -45,13 +57,28 @@ namespace onesnd
                 }
             }
         }
-        else if (soundChannel == 2) {
+        else if (soundChannel == 2) 
+        {
             for (int i = 0; i < outChannelCount; ++i)
             {                
                 if (channelMap[i] & channelMask)
                 {
-                    channelMatrix[i * 2 + 0] = channelMatrix[i] = maskCount > 0 ? maskVolume[i] : 1.0f;
-                    channelMatrix[i * 2 + 1] = channelMatrix[i] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                    if (isMono)
+                    {
+                        channelMatrix[i * 2 + 0] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                        channelMatrix[i * 2 + 1] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                    }
+                    else if(channelMap[i] & lSpeaker)
+                    {
+                        channelMatrix[i * 2 + 0] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                        channelMatrix[i * 2 + 1] = 0.0f;
+                    }
+                    else if(channelMap[i] & rSpeaker)
+                    {
+                        channelMatrix[i * 2 + 0] = 0.0f;
+                        channelMatrix[i * 2 + 1] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                    }
+                   
                 }                 
                 else
                 {
@@ -70,6 +97,24 @@ namespace onesnd
                     {
                         channelMatrix[i * soundChannel + n] = maskCount > 0 ? maskVolume[i] : 1.0f;
                     }
+                    /*if(isMono)
+                    {
+                       
+                    }
+                    if (channelMap[i] & lSpeaker)
+                    {
+                        for (int n = 0; n < soundChannel; ++n)
+                        {
+                            channelMatrix[i * soundChannel + n] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                        }
+                    }
+                    else if (channelMap[i] & rSpeaker)
+                    {
+                        for (int n = 0; n < soundChannel; ++n)
+                        {
+                            channelMatrix[i * soundChannel + n] = maskCount > 0 ? maskVolume[i] : 1.0f;
+                        }
+                    }*/
                 } 
                 else
                 {

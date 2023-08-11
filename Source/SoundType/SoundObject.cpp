@@ -44,7 +44,7 @@ namespace onesnd
         memset(&emitter, 0, sizeof(X3DAUDIO_EMITTER));
         emitter.ChannelCount = 1;
         emitter.CurveDistanceScaler = FLT_MIN;
-
+        setChannelMap();
         if (sound)
             setSound(sound); 
 
@@ -55,21 +55,22 @@ namespace onesnd
         if (playing)
             play();
 
-        setChannelMap();
+       
     }
 
     SoundObject::~SoundObject()
-    {  
+    {
+    	if(channelMap)
+        {
+            delete[] channelMap;
+            channelMap = nullptr;
+        }
         if (channelMatrix)
         {
             delete[] channelMatrix;
             channelMatrix = nullptr;
         }
-        if(channelMap)
-        {
-            delete[] channelMap;
-            channelMap = nullptr;
-        }
+       
         if (sound) 
             setSound(nullptr);
 
@@ -288,84 +289,7 @@ namespace onesnd
     {
         return sound ? sound->Frequency() : 0;
     } 
-   /*
-    void SoundObject::setOutChannelVolume(const float& leftVolume, const float& rightVolume)
-    {
-        if (soundChannel == 1)
-        {
-            for (int i = 0; i < outChannelCount; ++i)
-            {
-                if (channelMap[i] == leftChannel)
-                {
-                    channelMatrix[i] = leftVolume;
-                }
-                else if (channelMap[i] == rightChannel)
-                {
-                    channelMatrix[i] = rightVolume;
-                }
-                else
-                {
-                    channelMatrix[i] = 0.0f;
-                }
-            }
-        }
-        else  if (soundChannel == 2)
-        {
-            for (int i = 0; i < outChannelCount; ++i)
-            {
-                for (int n = 0; n < 2; ++n)
-                {
-                    //channelMatrix[i * soundChannels + n];
-                }
-                if (channelMap[i] == leftChannel)
-                {
-                    channelMatrix[i * 2 + 0] = 1.0f;
-                    channelMatrix[i * 2 + 1] = 0.0f;
-                }
-                else if (channelMap[i] == rightChannel)
-                {
-                    channelMatrix[i * 2 + 0] = 0.0f;
-                    channelMatrix[i * 2 + 1] = rightVolume;
-                }
-                else
-                {
-                    channelMatrix[i * 2 + 0] = 0.0f;
-                    channelMatrix[i * 2 + 1] = 0.0f;
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < outChannelCount; ++i)
-            {
-                if (channelMap[i] == leftChannel)
-                {
-                    for (int n = 0; n < soundChannel; ++n)
-                    {
-                        channelMatrix[i * soundChannel + n] = 1.0f;
-                    }
-                }
-                else if (channelMap[i] == rightChannel)
-                {
-                    for (int n = 0; n < soundChannel; ++n)
-                    {
-                        channelMatrix[i * soundChannel + n] = 1.0f;
-                    }
-                }
-                else
-                {
-                    for (int n = 0; n < soundChannel; ++n)
-                    {
-                        channelMatrix[i * soundChannel + n] = 0.0f;
-                    }
-                }
-            }
-        }
-        source->SetOutputMatrix(nullptr, soundChannel, outChannelCount, channelMatrix);
-    }
-    */
-    void SoundObject::setSoundChannel(const int& channel) {       
-    }
+   
     void SoundObject::onSoundChanged()
     {
         if (channelMatrix)
@@ -378,7 +302,8 @@ namespace onesnd
     void SoundObject::setChannelMap()
     {
         outChannelCount = XAudio2Device::instance().getChannelCount();
-        channelMap = new uint32_t[outChannelCount];
+        if (outChannelCount > 0)
+            channelMap = new uint32_t[outChannelCount];
         matrixAvailable = true;
 
         switch (outChannelCount)

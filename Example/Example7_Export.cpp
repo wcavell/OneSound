@@ -14,9 +14,7 @@ using namespace std;
 using namespace onesnd;
 
 int main()
-{
-    try
-    {
+{ 
         auto one_sound = OneSound_Create();
 
         // Print library info.
@@ -32,9 +30,9 @@ int main()
         //auto sound_1 = make_unique<Sound2D>(make_unique<SoundBuffer>("Sound\\shot.wav"),false,true,0.3f);
         auto sb = SoundBuffer_Create_ByPath("Sound\\Crysis 1.ogg");
         auto sound = Sound2D_Create_ByBuffer(sb, false, true, 0.8f); 
-
+        auto s2= Sound2D_Create_ByBuffer(sb, false, true, 0.1f);
         //SoundObject_SetOutChannel(sound, 0, SPEAKER_FRONT_CENTER);
-        Sound2D_SetChannelMask(sound, SPEAKER_FRONT_RIGHT| SPEAKER_FRONT_CENTER);
+        Sound2D_SetSpeaker(sound, SPEAKER_FRONT_RIGHT| SPEAKER_FRONT_CENTER);
         // The sound stream is good for the large effects like ambients, talks, unbreakable things.
         // NOTE: If we'll take a look at WAV formar then we'll see that it's not a good choice for streams.
         //       Many sounds file get decades of MBs for a few minutes.
@@ -48,15 +46,11 @@ int main()
 
         cout << "Press any key to quit." << endl;
         auto i = char();
-        cin >> i;
-        OneSound_Destroy(one_sound);
+        cin >> i;       
         Sound2D_Destroy(sound);
-        SoundBuffer_Destroy(sb);
-    }
-    catch (const runtime_error& e)
-    {
-        cout << e.what() << endl;
-    }
+		
+		//SoundBuffer_Destroy(sb); 
+		OneSound_Destroy(one_sound);        
 
     return 0;
 }

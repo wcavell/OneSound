@@ -16,18 +16,27 @@ namespace onesnd
     {
     public:
         Sound2D();
-       ~Sound2D() = default;
+       ~Sound2D();
 
         Sound2D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
-        virtual void onSoundChanged() override;
-        void setChannelMask(const uint32_t& mask);
-        void setMaskVolume(float* volume, int count);
-        uint32_t getChannelMask() const{
+        
+        void setSpeaker(const uint32_t& speaker);
+        void setSpeakerVolume(float* volume, int count);
+        uint32_t getSpeaker() const{
             return  channelMask;
         }
+        void setMono(const bool& mono){
+            isMono = mono;
+        }
+        bool getMono() const{
+            return isMono;
+        }
+    protected:
+        virtual void onSoundChanged() override;
     private:
         uint32_t channelMask;
         float* maskVolume;
         int maskCount;
+        bool isMono;
     };
 }

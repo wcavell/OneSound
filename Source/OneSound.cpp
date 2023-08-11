@@ -43,7 +43,7 @@ namespace onesnd
         if (XAudio2Device::instance().getEngine())
             XAudio2Device::instance().finalize();
     }
-
+    
     unsigned long long OneSound::getLibraryVersion() const
     {
         return 1ull;

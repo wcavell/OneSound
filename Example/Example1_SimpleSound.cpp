@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Example 1 "Simple Sound" for OneSound.
  * Copyright ⓒ 2018 Valentyn Bondarenko. All rights reserved.
  * License: https://github.com/weelhelmer/OneSound/master/LICENSE

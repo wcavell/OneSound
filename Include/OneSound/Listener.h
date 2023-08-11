@@ -7,9 +7,11 @@
 #pragma once
 
 #include <cstdint>
+#include <list>
 
 #include "OneSound\Export.h"
 #include "OneSound\XAudio2Device.h"
+#include "SoundType\Sound3D.h"
 
 namespace onesnd
 {
@@ -31,10 +33,23 @@ namespace onesnd
         X3DAUDIO_LISTENER* getListener() const { return xListener; } 
         void setPositionOrientation(const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front);
         void setListenerVelocity(const X3DAUDIO_VECTOR& velocity);
-        void setListenerChannel(const uint32_t& leftChannel, const uint32_t& rightChannel);
+        void update();
+        void setSpeaker(const uint32_t& speaker)
+        {
+            speakerMask = speaker;
+        }
+        uint32_t getSpeaker()
+        {
+            return speakerMask;
+        }
+        void addSound(Sound3D* sound);
+        void removeSound(Sound3D* sound);
+    private:
+        void setMatrix(); 
     private:
         X3DAUDIO_LISTENER* xListener;
-        uint32_t leftChannel;
-        uint32_t rightChannel;
+        uint32_t speakerMask; 
+        std::list<Sound3D*> sounds;
+        X3DAUDIO_HANDLE x3DAudioHandle;
     };
 }

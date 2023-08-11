@@ -57,7 +57,9 @@ namespace onesnd
         inline std::shared_ptr<SoundBuffer> getSound() const { return sound; }
 
         inline IXAudio2SourceVoice* getSource() const { return source; }
-
+        inline float* getChannelMatrix()const { return channelMatrix; }
+        inline uint32_t* getChannelMap()const { return channelMap;}
+        inline X3DAUDIO_EMITTER getEmitter()const { return  emitter; }
         /**
         * @return TRUE if this SoundObject has an attached SoundStream that can be streamed.
         */
@@ -158,12 +160,8 @@ namespace onesnd
         /**
         * @return Number of samples processed every second (aka SampleRate or Frequency)
         */
-        int getSamplesPerSecond() const;        
-
-        void setSoundChannel(const int& channel);
-
-    protected:
-        void setOutChannelVolume(const float& leftVolume, const float& rightVolume);
+        int getSamplesPerSecond() const;  
+    protected: 
         virtual void onSoundChanged();
 
     private:

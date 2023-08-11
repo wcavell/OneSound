@@ -103,7 +103,7 @@ int main()
                 active_sounds.clear();
             }
         }
-
+         
         active_sounds.clear();
 
         cout << "Press any key to quit." << endl;

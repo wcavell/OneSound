@@ -28,6 +28,22 @@ extern "C"
 	ONE_SOUND_API int32_t OneSound_GetOutputChannels(OneSound* one) {
 		return one->getOutputChannels();
 	}
+	ONE_SOUND_API void OneSound_SetLeftSpeakerMap(uint32_t lSpeaker)
+	{
+		XAudio2Device::instance().setLeftSpeaker(lSpeaker);
+	}
+	ONE_SOUND_API void OneSound_SetRightSpeakerMap(uint32_t rSpeaker)
+	{
+		XAudio2Device::instance().setRightSpeaker(rSpeaker);
+	}
+	ONE_SOUND_API int32_t OneSound_GetLeftSpeakerMap()
+	{
+		return XAudio2Device::instance().getLeftSpeaker();
+	}
+	ONE_SOUND_API int32_t OneSound_GetRightSpeakerMap()
+	{
+		return XAudio2Device::instance().getRightSpeaker();
+	}
 	ONE_SOUND_API void OneSound_Destroy(OneSound* one)
 	{
 		delete one;
@@ -83,13 +99,25 @@ extern "C"
 		Sound2D* sound = new Sound2D(ptr, loop, play, volume);
 		return sound;
 	}
-	ONE_SOUND_API uint32_t Sound2d_GetChannelMask(Sound2D* sound)
+	ONE_SOUND_API uint32_t Sound2D_GetSpeaker(Sound2D* sound)
 	{
-		return sound->getChannelMask();
+		return sound->getSpeaker();
 	}
-	ONE_SOUND_API void Sound2D_SetChannelMask(Sound2D* sound,uint32_t mask)
+	ONE_SOUND_API void Sound2D_SetSpeaker(Sound2D* sound,uint32_t mask)
 	{
-		sound->setChannelMask(mask);
+		sound->setSpeaker(mask);
+	}
+	ONE_SOUND_API void Sound2D_SetSpeakerVolume(Sound2D* sound, float* volume, int count)
+	{
+		sound->setSpeakerVolume(volume, count);
+	}
+	ONE_SOUND_API void Sound2D_SetMono(Sound2D* sound, bool mono)
+	{
+		sound->setMono(mono);
+	}
+	ONE_SOUND_API bool Sound2D_GetMono(Sound2D* sound)
+	{
+		return sound->getMono();
 	}
 	ONE_SOUND_API void Sound2D_Destroy(Sound2D* sound)
 	{
@@ -106,16 +134,10 @@ extern "C"
 		std::shared_ptr<SoundBuffer> ptr(buff);
 		Sound3D* sound = new Sound3D(ptr, loop, play, volume);
 		return sound;
-	}
-	ONE_SOUND_API void Sound3D_Apply3D(Sound3D* sound, X3DAUDIO_LISTENER* xListener) {
-		sound->apply3D(xListener);
-	}
+	} 
 	ONE_SOUND_API void Sound3D_SetSourcePosition(Sound3D* sound, X3DAUDIO_VECTOR position) {
 		sound->setSourcePosition(position);
-	}
-	ONE_SOUND_API void Sound3D_Update3D(Sound3D* sound) {
-		sound->update3D();
-	}
+	} 
 	ONE_SOUND_API void Sound3D_Destroy(Sound3D* sound)
 	{
 		delete sound;
@@ -185,13 +207,7 @@ extern "C"
 	ONE_SOUND_API int SoundObject_GetSamplesPerSecond(SoundObject* so) {
 		return so->getSamplesPerSecond();
 	}
-	/*ONE_SOUND_API void SoundObject_SetOutChannel(SoundObject* so, uint32_t speakerLeftChannel, uint32_t speakerRightChannel) {
-		so->setOutChannel(speakerLeftChannel, speakerRightChannel);
-	}*/
-	ONE_SOUND_API void SoundObject_SetSoundChannel(SoundObject* so, int channel) {
-		so->setSoundChannel(channel);
-	}
-
+	 
 	ONE_SOUND_API Listener* Listener_Create() {
 		Listener* listener = new Listener();
 		return listener;
@@ -206,5 +222,28 @@ extern "C"
 	ONE_SOUND_API X3DAUDIO_LISTENER* Listener_GetListener(Listener* listener) {
 		return listener->getListener();
 	}
-
+	ONE_SOUND_API void Listener_SetListenerVelocity(Listener* listener, X3DAUDIO_VECTOR velocity)
+	{
+		listener->setListenerVelocity(velocity);
+	}
+	ONE_SOUND_API void Listener_Update(Listener* listener)
+	{
+		listener->update();
+	}
+	ONE_SOUND_API void Listener_SetSpeaker(Listener* listener, uint32_t speaker)
+	{
+		listener->setSpeaker(speaker);
+	}
+	ONE_SOUND_API uint32_t Listener_GetSpeaker(Listener* listener)
+	{
+		return listener->getSpeaker();
+	}
+	ONE_SOUND_API void Listener_AddSound(Listener* listener, Sound3D* sound)
+	{
+		listener->addSound(sound);
+	}
+	ONE_SOUND_API void Listener_RemoveSound(Listener* listener, Sound3D* sound)
+	{
+		listener->removeSound(sound);
+	}
 }

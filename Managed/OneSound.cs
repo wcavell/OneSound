@@ -1,6 +1,7 @@
 using System; 
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace OneSound
 {
@@ -71,6 +72,39 @@ namespace OneSound
 
     public class SoundEngine : OneObject
     {
+        /// <summary>
+        /// 左声道映射 
+        /// 默认值 FrontLeft | FrontCenter | BackLeft | SideLeft 
+        /// </summary>
+        public static Speaker LeftSpeakerMap
+        {
+            get
+            {
+                return OneAPI.OneSound_GetLeftSpeakerMap();
+            }
+            set
+            {
+                OneAPI.OneSound_SetLeftSpeakerMap(value);
+            }
+        }
+
+        /// <summary>
+        /// 右省道映射
+        /// 默认值 FrontRight | LowFrequency | BackRight | SideRight
+        /// </summary>
+        public static Speaker RightSpeakerMap
+        {
+            get
+            {
+                return OneAPI.OneSound_GetRightSpeakerMap();
+            }
+            set
+            {
+                OneAPI.OneSound_SetRightSpeakerMap(value);
+            }
+        }
+
+
         public SoundEngine()
         {
             Handle = OneAPI.OneSound_Create();
@@ -80,6 +114,7 @@ namespace OneSound
         {
             OneAPI.OneSound_Destroy(handle);
         }
+         
     }
 
     public class SoundBuffer :OneObject
@@ -130,20 +165,25 @@ namespace OneSound
 
     public class SoundObject:OneObject
     {
+        public bool IsStreamable
+        {
+            get
+            {
+                return OneAPI.SoundObject_IsStreamable(Handle);
+            }
+        }
+
          
         public void SetSound(SoundBuffer sound, bool loop, bool play, float volume)
         {
             OneAPI.SoundObject_SetSound(Handle, sound.Handle, loop, play, volume);
         }
 
-        public bool IsStreamable()
-        {
-            return OneAPI.SoundObject_IsStreamable(Handle);
-        }
 
-        public bool IsEOS( )
+
+        public bool IsEOS
         {
-            return OneAPI.SoundObject_IsEOS(Handle);
+            get { return OneAPI.SoundObject_IsEOS(Handle); }
         }
 
         public void Play()
@@ -171,29 +211,30 @@ namespace OneSound
             OneAPI.SoundObject_Rewind(Handle);
         }
 
-        public bool IsPlaying()
+        public bool IsPlaying
         {
-            return OneAPI.SoundObject_IsPlaying(Handle);
+            get { return OneAPI.SoundObject_IsPlaying(Handle); }
         }
 
-        public bool IsStopped()
+        public bool IsStopped
         {
-            return OneAPI.SoundObject_IsStopped(Handle);
+            get{ return OneAPI.SoundObject_IsStopped(Handle);}
         }
 
-        public bool IsPaused()
+        public bool IsPaused
         {
-            return OneAPI.SoundObject_IsPaused(Handle);
+            get{return OneAPI.SoundObject_IsPaused(Handle);}
         }
 
-        public bool IsInitial()
+        public bool IsInitial
         {
-            return OneAPI.SoundObject_IsInitial(Handle);
+            get{return OneAPI.SoundObject_IsInitial(Handle);}
         }
 
-        public bool IsLooping()
+        public bool IsLooping
         {
-            return OneAPI.SoundObject_IsLooping(Handle);
+            get { return OneAPI.SoundObject_IsLooping(Handle); }
+            set { OneAPI.SoundObject_SetLooping(Handle, value); }
         }
 
         public void SetLooping(bool looping)
@@ -201,25 +242,19 @@ namespace OneSound
             OneAPI.SoundObject_SetLooping(Handle,looping);
         }
 
-        public void SetVolume(float gain)
+
+        public float Volume
         {
-            OneAPI.SoundObject_SetVolume(Handle,gain);
+            get { return OneAPI.SoundObject_GetVolume(Handle); }
+            set { OneAPI.SoundObject_SetVolume(Handle, value); }
         }
 
-        public float GetVolume()
+        public int PlaybackPosition
         {
-            return OneAPI.SoundObject_GetVolume(Handle);
+            get { return OneAPI.SoundObject_GetPlaybackPosition(Handle); }
+            set { OneAPI.SoundObject_SetPlaybackPosition(Handle, value); }
         }
-
-        public int GetPlaybackPosition()
-        {
-            return OneAPI.SoundObject_GetPlaybackPosition(Handle);
-        }
-        
-        public   void SetPlaybackPosition( int seekpos)
-        {
-            OneAPI.SoundObject_SetPlaybackPosition(Handle,seekpos);
-        }
+         
 
         public int GetPlaybackSize()
         {
@@ -229,16 +264,6 @@ namespace OneSound
         public int GetSamplesPerSecond()
         {
             return OneAPI.SoundObject_GetSamplesPerSecond(Handle);
-        }
-
-        public void SetOutChannel(Speaker speakerLeftChannel, Speaker speakerRightChannel)
-        {
-            OneAPI.SoundObject_SetOutChannel(Handle,speakerLeftChannel,speakerRightChannel);
-        }
-
-        public void SetSoundChannel(int channel)
-        {
-            OneAPI.SoundObject_SetSoundChannel(Handle,channel);
         }
     }
 
@@ -263,6 +288,34 @@ namespace OneSound
         {
             OneAPI.Listener_SetPositionOrientation(Handle, position, top, front);
         }
+
+
+        public void SetListenerVelocity(Vector velocity)
+        {
+            OneAPI.Listener_SetListenerVelocity(Handle, velocity);
+        }
+
+
+        public void Update()
+        {
+            OneAPI.Listener_Update(Handle);
+        }
+
+        public Speaker Speaker
+        {
+            get { return OneAPI.Listener_GetSpeaker(Handle); }
+            set { OneAPI.Listener_SetSpeaker(Handle, value); }
+        }
+
+        public void AddSound(IntPtr sound)
+        {
+            OneAPI.Listener_AddSound(Handle, sound);
+        }
+
+        public void RemoveSound(IntPtr sound)
+        {
+            OneAPI.Listener_RemoveSound(Handle, sound);
+        }
     }
 
     public class Sound2D : SoundObject
@@ -279,17 +332,25 @@ namespace OneSound
 
         protected override void CloseHandle(IntPtr handle)
         {
-             OneAPI.Sound2D_Destroy(handle);
+            OneAPI.Sound2D_Destroy(handle);
         }
 
-        public Speaker GetChannelMask()
+        public Speaker Speaker
         {
-            return OneAPI.Sound2d_GetChannelMask(Handle);
+            get{return OneAPI.Sound2D_GetSpeaker(Handle);}
+            set { OneAPI.Sound2D_SetSpeaker(Handle, value); }
         }
 
-        public void SetChannelMask(Speaker mask)
+        //public void SetSpeakerVolume(float[] volume, int count)
+        //{
+        //    OneAPI.Sound2D_SetSpeakerVolume(Handle, volume, count);
+        //}
+
+
+        public bool IsMono
         {
-            OneAPI.Sound2D_SetChannelMask(Handle,mask);
+            get { return OneAPI.Sound2D_GetMono(Handle); }
+            set { OneAPI.Sound2D_SetMono(Handle, value); }
         }
     }
 
@@ -309,21 +370,9 @@ namespace OneSound
             OneAPI.Sound3D_Destroy(handle);
         }
 
-        public void Apply3D(Listener listener)
-        {
-            OneAPI.Sound3D_Apply3D(Handle,listener.GetListenerPtr());
-        }
-
-
         public void SetSourcePosition(Vector position)
         {
             OneAPI.Sound3D_SetSourcePosition(Handle,position);
-        }
-
-
-        public void Update3D()
-        {
-            OneAPI.Sound3D_Update3D(Handle);
         }
     }
 
@@ -342,6 +391,26 @@ namespace OneSound
         [DllImport(dllName)]
         public static extern void OneSound_Destroy(IntPtr handle);
 
+        [DllImport(dllName)]
+        public static extern ulong OneSound_GetLibraryVersion(IntPtr handle);
+        [DllImport(dllName)]
+        public static extern string OneSound_GetLibraryVersionStr(IntPtr handle);
+        [DllImport(dllName)]
+        public static extern string OneSound_GetLibraryStatus(IntPtr handle);
+        [DllImport(dllName)]
+        public static extern string OneSound_GetLibraryName(IntPtr handle);
+        [DllImport(dllName)]
+        public static extern int OneSound_GetOutputChannels(IntPtr handle);
+
+        [DllImport(dllName)]
+        public static extern void OneSound_SetLeftSpeakerMap(Speaker lSpeakers);
+
+        [DllImport(dllName)]
+        public static extern void OneSound_SetRightSpeakerMap(Speaker rSpeaker);
+        [DllImport(dllName)]
+        public static extern Speaker OneSound_GetLeftSpeakerMap();
+        [DllImport(dllName)]
+        public static extern Speaker OneSound_GetRightSpeakerMap();
 
         [DllImport(dllName)]
         public static extern IntPtr SoundBuffer_Create();
@@ -369,6 +438,8 @@ namespace OneSound
         [DllImport(dllName)]
         public static extern void SoundStream_Destroy(IntPtr handle);
 
+
+
         [DllImport(dllName)]
         public static extern IntPtr Sound2D_Create();
 
@@ -380,6 +451,19 @@ namespace OneSound
         public static extern void Sound2D_Destroy(IntPtr handle);
 
         [DllImport(dllName)]
+        public static extern Speaker Sound2D_GetSpeaker(IntPtr handle);
+        [DllImport(dllName)]
+        public static extern void Sound2D_SetSpeaker(IntPtr handle, Speaker mask);
+        [DllImport(dllName)]
+        public static extern void Sound2D_SetSpeakerVolume(IntPtr handle, [In]float[] volume, int count);
+        [DllImport(dllName)]
+        public static extern void Sound2D_SetMono(IntPtr handle, bool mono);
+        [DllImport(dllName)]
+        public static extern bool Sound2D_GetMono(IntPtr handle);
+
+
+
+        [DllImport(dllName)]
         public static extern IntPtr Sound3D_Create();
 
         [DllImport(dllName)]
@@ -387,18 +471,7 @@ namespace OneSound
             bool play, float volume);
 
         [DllImport(dllName)]
-        public static extern Speaker Sound2d_GetChannelMask(IntPtr sound);
-        [DllImport(dllName)]
-        public static extern void Sound2D_SetChannelMask(IntPtr sound, Speaker mask);
-
-        [DllImport(dllName)]
-        public static extern void Sound3D_Apply3D(IntPtr handle, IntPtr listener);
-
-        [DllImport(dllName)]
-        public static extern void Sound3D_SetSourcePosition(IntPtr handle, Vector position);
-
-        [DllImport(dllName)]
-        public static extern void Sound3D_Update3D(IntPtr handle);
+        public static extern void Sound3D_SetSourcePosition(IntPtr handle, Vector position); 
 
         [DllImport(dllName)]
         public static extern void Sound3D_Destroy(IntPtr handle);
@@ -444,10 +517,6 @@ namespace OneSound
         public static extern int SoundObject_GetPlaybackSize(IntPtr so);
         [DllImport(dllName)]
         public static extern int SoundObject_GetSamplesPerSecond(IntPtr so);
-        [DllImport(dllName)]
-        public static extern void SoundObject_SetOutChannel(IntPtr so, Speaker speakerLeftChannel, Speaker speakerRightChannel);
-        [DllImport(dllName)]
-        public static extern void SoundObject_SetSoundChannel(IntPtr so,  int channel);
 
         [DllImport(dllName)]
         public static extern IntPtr Listener_Create();
@@ -457,6 +526,19 @@ namespace OneSound
         public static extern void Listener_SetPositionOrientation(IntPtr listener, Vector position, Vector top, Vector front);
         [DllImport(dllName)]
         public static extern IntPtr Listener_GetListener(IntPtr listener);
+
+        [DllImport(dllName)]
+        public static extern void Listener_SetListenerVelocity(IntPtr listener, Vector velocity);
+        [DllImport(dllName)]
+        public static extern void Listener_Update(IntPtr listener);
+        [DllImport(dllName)]
+        public static extern void Listener_SetSpeaker(IntPtr listener, Speaker speaker);
+        [DllImport(dllName)]
+        public static extern Speaker Listener_GetSpeaker(IntPtr listener);
+        [DllImport(dllName)]
+        public static extern void Listener_AddSound(IntPtr listener, IntPtr sound);
+        [DllImport(dllName)]
+        public static extern void Listener_RemoveSound(IntPtr listener, IntPtr sound);
     }
 }
 

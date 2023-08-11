@@ -8,8 +8,17 @@
 
 #include "OneSound\StreamType\AudioStream.h"
 
+#define LEFT_SPEAKER        SPEAKER_FRONT_LEFT | SPEAKER_FRONT_CENTER | SPEAKER_BACK_LEFT | SPEAKER_SIDE_LEFT
+#define RIGHT_SPEAKER       SPEAKER_FRONT_RIGHT | SPEAKER_LOW_FREQUENCY | SPEAKER_BACK_RIGHT | SPEAKER_SIDE_RIGHT
 namespace onesnd
 {
+    XAudio2Device::XAudio2Device() :
+        leftSpeaker(LEFT_SPEAKER),
+        rightSpeaker(RIGHT_SPEAKER)
+    {
+
+    }
+
     void XAudio2Device::initialize()
     {
         CoInitializeEx(nullptr, COINIT_MULTITHREADED);
@@ -25,7 +34,7 @@ namespace onesnd
 
         XAudio2Create(&xEngine, flags);
         xEngine->CreateMasteringVoice(&xMaster, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE);
-        X3DAudioInitialize(SPEAKER_STEREO, X3DAUDIO_SPEED_OF_SOUND, x3DAudioHandle);
+        X3DAudioInitialize(SPEAKER_STEREO, X3DAUDIO_SPEED_OF_SOUND, X3DInstance);
 
         XAUDIO2_DEVICE_DETAILS dd;
         ZeroMemory(&dd, sizeof(dd));
