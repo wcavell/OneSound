@@ -55,11 +55,11 @@ int main()
         while (!isKeyDown(exit_key))
         {
             if (isKeyDown('1'))
-                active_sounds.push_back(make_shared<Sound2D>(buffers[0], false, true));
+                active_sounds.push_back(make_shared<Sound2D>(buffers[0].get(), false, true));
 
             if (isKeyDown('2'))
             {
-                auto sound_2 = make_shared<Sound2D>(buffers[1]);
+                auto sound_2 = make_shared<Sound2D>(buffers[1].get());
                 //sound_2->setOutChannel(0, SPEAKER_FRONT_RIGHT);
                 sound_2->play(); // It can be played anywhere.
 
@@ -69,21 +69,21 @@ int main()
             if (isKeyDown('3'))
             {
                 auto sound_3 = make_shared<Sound2D>();
-                sound_3->play(buffers[2], false, true, 0.7f); // Play whatever.
+                sound_3->play(buffers[2].get(), false, true, 0.7f); // Play whatever.
 
                 active_sounds.push_back(sound_3);
             }
 
             if (isKeyDown('4'))
             {
-                auto sound_4 = make_shared<Sound2D>(buffers[3]);
+                auto sound_4 = make_shared<Sound2D>(buffers[3].get());
                 sound_4->play(); // Play whatever.
 
                 active_sounds.push_back(sound_4);
             }
 
             if (isKeyDown('5'))
-                active_sounds.push_back(make_shared<Sound2D>(buffers[4], false, true));
+                active_sounds.push_back(make_shared<Sound2D>(buffers[4].get(), false, true));
 
             if (isKeyDown('S'))
             {

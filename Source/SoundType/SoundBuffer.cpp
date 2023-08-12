@@ -133,7 +133,7 @@ namespace onesnd
         if (!xaBuffer)
             return false; // no data
 
-        if (so->getSound().get() == this)
+        if (so->getSound() == this)
             return false; // no double-binding dude, it will mess up referance_counting.
 
         so->getSource()->SubmitSourceBuffer(xaBuffer); // enqueue this buffer
@@ -144,7 +144,7 @@ namespace onesnd
 
     bool SoundBuffer::UnbindSource(SoundObject* so)
     {
-        if (so->getSound().get() == this) // correct buffer link?
+        if (so->getSound() == this) // correct buffer link?
         {
             so->getSource()->Stop(); // make sure its stopped (otherwise Flush won't work)
             if (XABuffer::getBuffersQueued(so->getSource()))

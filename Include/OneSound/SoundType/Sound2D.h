@@ -18,7 +18,7 @@ namespace onesnd
         Sound2D();
        ~Sound2D();
 
-        Sound2D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
+        Sound2D(SoundBuffer* sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
         
         void setSpeaker(const uint32_t& speaker);
         void setSpeakerVolume(float* volume, int count);

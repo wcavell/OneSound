@@ -1,5 +1,4 @@
-#include "OneSound\Export.h"
-#include "OneSound\OneSound.h"
+#include "OneSound\OneExport.h"
 
 using namespace onesnd;
 extern "C"
@@ -95,8 +94,8 @@ extern "C"
 	}
 	ONE_SOUND_API Sound2D* Sound2D_Create_ByBuffer(SoundBuffer* buff, bool loop, bool play, float volume)
 	{
-		std::shared_ptr<SoundBuffer> ptr(buff);
-		Sound2D* sound = new Sound2D(ptr, loop, play, volume);
+		//std::shared_ptr<SoundBuffer> ptr(buff);
+		Sound2D* sound = new Sound2D(buff, loop, play, volume);
 		return sound;
 	}
 	ONE_SOUND_API uint32_t Sound2D_GetSpeaker(Sound2D* sound)
@@ -131,13 +130,16 @@ extern "C"
 	}
 	ONE_SOUND_API Sound3D* Sound3D_Create_ByBuffer(SoundBuffer* buff, bool loop, bool play, float volume)
 	{
-		std::shared_ptr<SoundBuffer> ptr(buff);
-		Sound3D* sound = new Sound3D(ptr, loop, play, volume);
+		//std::shared_ptr<SoundBuffer> ptr(buff);
+		Sound3D* sound = new Sound3D(buff, loop, play, volume);
 		return sound;
 	} 
 	ONE_SOUND_API void Sound3D_SetSourcePosition(Sound3D* sound, X3DAUDIO_VECTOR position) {
 		sound->setSourcePosition(position);
 	} 
+	ONE_SOUND_API X3DAUDIO_DSP_SETTINGS* Sound3D_GetDspSetting(Sound3D* sound) {
+		return sound->getDspSetting();
+	}
 	ONE_SOUND_API void Sound3D_Destroy(Sound3D* sound)
 	{
 		delete sound;
@@ -146,8 +148,8 @@ extern "C"
 
 	ONE_SOUND_API void SoundObject_SetSound(SoundObject* so, SoundBuffer* sound, bool loop, bool play, float volume)
 	{
-		std::shared_ptr<SoundBuffer> ptr(sound);
-		so->setSound(ptr, loop, play, volume);
+		//std::shared_ptr<SoundBuffer> ptr(sound);
+		so->setSound(sound, loop, play, volume);
 	}
 	ONE_SOUND_API bool SoundObject_IsStreamable(SoundObject* so) {
 		return so->isStreamable();
@@ -159,8 +161,8 @@ extern "C"
 		so->play();
 	}
 	ONE_SOUND_API void SoundObject_PlaySound(SoundObject* so, SoundBuffer* sound, bool loop, bool play, float volume) {
-		const std::shared_ptr<SoundBuffer> ptr(sound);
-		so->play(ptr, loop, play, volume);
+		//const std::shared_ptr<SoundBuffer> ptr(sound);
+		so->play(sound, loop, play, volume);
 	}
 	ONE_SOUND_API void SoundObject_Stop(SoundObject* so) {
 		so->stop();
@@ -207,7 +209,13 @@ extern "C"
 	ONE_SOUND_API int SoundObject_GetSamplesPerSecond(SoundObject* so) {
 		return so->getSamplesPerSecond();
 	}
-	 
+	ONE_SOUND_API X3DAUDIO_EMITTER* SoundObject_GetEmitter(SoundObject* so) {
+		return so->getEmitter();
+	}
+	ONE_SOUND_API void SoundObject_SetOutputMatrix(SoundObject* so, UINT32 SourceChannels, UINT32 DestinationChannels, float* pLevelMatrix) {
+		so->setOutputMatrix(SourceChannels, DestinationChannels, pLevelMatrix);
+	}
+
 	ONE_SOUND_API Listener* Listener_Create() {
 		Listener* listener = new Listener();
 		return listener;
@@ -219,9 +227,9 @@ extern "C"
 	ONE_SOUND_API void Listener_SetPositionOrientation(Listener* listener, X3DAUDIO_VECTOR position, X3DAUDIO_VECTOR top,  X3DAUDIO_VECTOR front) {
 		listener->setPositionOrientation(position, top, front);
 	}
-	ONE_SOUND_API X3DAUDIO_LISTENER* Listener_GetListener(Listener* listener) {
+	/*ONE_SOUND_API X3DAUDIO_LISTENER* Listener_GetListener(Listener* listener) {
 		return listener->getListener();
-	}
+	}*/
 	ONE_SOUND_API void Listener_SetListenerVelocity(Listener* listener, X3DAUDIO_VECTOR velocity)
 	{
 		listener->setListenerVelocity(velocity);
@@ -245,5 +253,20 @@ extern "C"
 	ONE_SOUND_API void Listener_RemoveSound(Listener* listener, Sound3D* sound)
 	{
 		listener->removeSound(sound);
+	}
+	ONE_SOUND_API X3DAUDIO_LISTENER* Listener_GetListener(Listener* listener) {
+		return listener->getListener();
+	}
+
+	ONE_SOUND_API void X3DAudioCore_XACT3DCalculate(X3DAUDIO_HANDLE X3DInstance, X3DAUDIO_LISTENER* pListener, X3DAUDIO_EMITTER* pEmitter, X3DAUDIO_DSP_SETTINGS* pDSPSettings) {
+		XACT3DCalculate(X3DInstance, pListener, pEmitter, pDSPSettings);
+	}
+	ONE_SOUND_API void X3DAudioCore_X3DAudioCalculate(X3DAUDIO_HANDLE instance, X3DAUDIO_LISTENER* listener, X3DAUDIO_EMITTER* emitter, uint32_t flags,
+		X3DAUDIO_DSP_SETTINGS* dspSettingsPtr) {
+		X3DAudioCalculate(instance, listener, emitter, flags, dspSettingsPtr);
+	}
+	ONE_SOUND_API BYTE* X3DAudioCore_GetInstance() {
+		auto instance = XAudio2Device::instance().X3DInstance;
+		return instance;
 	}
 }

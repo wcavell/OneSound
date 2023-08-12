@@ -4,7 +4,7 @@
  * License: https://github.com/weelhelmer/OneSound/master/LICENSE
  */
 
-#include "OneSound\OneSound.h"
+#include "OneSound\OneExport.h"
 
 #include <iostream>
 #include <thread>
@@ -24,15 +24,26 @@ int main()
 
         // We can initialize it in this way, but look at the OneSound arg.
         one_sound->initialize();
-
+        auto instance = X3DAudioCore_GetInstance();
         // The sound buffer is good for short effects like shots, steps or small nature details and so on.
         // Any sound plays in another thread.
         //auto sound_1 = make_unique<Sound2D>(make_unique<SoundBuffer>("Sound\\shot.wav"),false,true,0.3f);
         auto sb = SoundBuffer_Create_ByPath("Sound\\Crysis 1.ogg");
-        auto sound = Sound2D_Create_ByBuffer(sb, false, true, 0.8f); 
-        auto s2= Sound2D_Create_ByBuffer(sb, false, true, 0.1f);
+        auto sound = Sound3D_Create_ByBuffer(sb, false, true, 0.8f); 
+        X3DAUDIO_VECTOR sp{ 10.0F, 0.0F, 10.0F };
+        X3DAUDIO_VECTOR zerop{ 0.0F, 0.0F, 0.0F };
+        X3DAUDIO_VECTOR top{ 0.0F, 1.0F, 0.0F };
+        X3DAUDIO_VECTOR front{ 0.0F, 0.0F, 1.0F };
+        sound->setSourcePosition(sp);
+        auto listener = Listener_Create();
+        listener->setSpeaker(SPEAKER_FRONT_LEFT | SPEAKER_LOW_FREQUENCY);
+        listener->addSound(sound);
+        listener->setPositionOrientation(X3DAUDIO_VECTOR(0,0,0), top, front);
+        listener->setListenerVelocity(X3DAUDIO_VECTOR{ 0.0f,0.0f,0.0f });
+        listener->update();
+        
         //SoundObject_SetOutChannel(sound, 0, SPEAKER_FRONT_CENTER);
-        Sound2D_SetSpeaker(sound, SPEAKER_FRONT_RIGHT| SPEAKER_FRONT_CENTER);
+      /*  Sound2D_SetSpeaker(sound, SPEAKER_FRONT_RIGHT| SPEAKER_FRONT_CENTER);*/
         // The sound stream is good for the large effects like ambients, talks, unbreakable things.
         // NOTE: If we'll take a look at WAV formar then we'll see that it's not a good choice for streams.
         //       Many sounds file get decades of MBs for a few minutes.
@@ -47,9 +58,8 @@ int main()
         cout << "Press any key to quit." << endl;
         auto i = char();
         cin >> i;       
-        Sound2D_Destroy(sound);
-		
-		//SoundBuffer_Destroy(sb); 
+        Sound3D_Destroy(sound);		
+		SoundBuffer_Destroy(sb); 
 		OneSound_Destroy(one_sound);        
 
     return 0;

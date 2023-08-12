@@ -11,14 +11,12 @@
 namespace onesnd
 {
     Listener::Listener()
-    {
-        X3DAUDIO_LISTENER m_listener;
-        ZeroMemory(&m_listener, sizeof(X3DAUDIO_LISTENER));
-        xListener = &m_listener; 
+    { 
+        ZeroMemory(&xListener, sizeof(X3DAUDIO_LISTENER)); 
     }
     Listener::~Listener()
     {
-        xListener = nullptr;
+        
         for (auto it = sounds.begin(); it != sounds.end(); ++it)
         {
             if (*it)
@@ -44,15 +42,15 @@ namespace onesnd
 
         return value;
     }
-    void Listener::setPositionOrientation(const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front)
+    void Listener::setPositionOrientation( X3DAUDIO_VECTOR position, X3DAUDIO_VECTOR top, X3DAUDIO_VECTOR front)
     {
-        xListener->Position = position;
-        xListener->OrientTop = top;
-        xListener->OrientFront = front;
+        xListener.Position = position;
+        xListener.OrientTop = top;
+        xListener.OrientFront = front;
     }
     void Listener::setListenerVelocity(const X3DAUDIO_VECTOR& velocity)
     {
-        xListener->Velocity = velocity;
+        xListener.Velocity = velocity;
     }
 
     void Listener::update()
@@ -67,7 +65,8 @@ namespace onesnd
             {
                 auto sound = *it;
                 auto dsp = sound->getDspSetting();
-                XACT3DCalculate(XAudio2Device::instance().X3DInstance, xListener, &sound->getEmitter(), dsp);
+                auto lt = &xListener;
+                XACT3DCalculate(XAudio2Device::instance().X3DInstance,lt , sound->getEmitter(), dsp);
                 sound->setSpeakerVolume(speakerMask, dsp->pMatrixCoefficients[0], dsp->pMatrixCoefficients[1]);
                 ++it;
             }

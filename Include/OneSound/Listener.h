@@ -30,8 +30,8 @@ namespace onesnd
     public:
         void setVolume(float volume);
         float getVolume() const;
-        X3DAUDIO_LISTENER* getListener() const { return xListener; } 
-        void setPositionOrientation(const X3DAUDIO_VECTOR& position, const X3DAUDIO_VECTOR& top, const X3DAUDIO_VECTOR& front);
+        X3DAUDIO_LISTENER* getListener() { return &xListener; } 
+        void setPositionOrientation(X3DAUDIO_VECTOR position, X3DAUDIO_VECTOR top, X3DAUDIO_VECTOR front);
         void setListenerVelocity(const X3DAUDIO_VECTOR& velocity);
         void update();
         void setSpeaker(const uint32_t& speaker)
@@ -47,7 +47,7 @@ namespace onesnd
     private:
         void setMatrix(); 
     private:
-        X3DAUDIO_LISTENER* xListener;
+        X3DAUDIO_LISTENER xListener;
         uint32_t speakerMask; 
         std::list<Sound3D*> sounds;
         X3DAUDIO_HANDLE x3DAudioHandle;

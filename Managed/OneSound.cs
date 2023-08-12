@@ -8,9 +8,18 @@ namespace OneSound
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector
     {
+        public static Vector Top = new Vector(0,1,0);
+        public static Vector Front = new Vector(0, 0, 1);
         public float X;
         public float Y;
         public float Z;
+
+        public Vector(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
     }
 
     [Flags]
@@ -114,7 +123,24 @@ namespace OneSound
         {
             OneAPI.OneSound_Destroy(handle);
         }
-         
+
+        
+        public  void XACT3DCalculate(IntPtr X3DInstance, IntPtr pListener, IntPtr pEmitter,
+            IntPtr pDSPSettings)
+        {
+
+        }
+
+        public void X3DAudioCalculate(IntPtr instance, IntPtr listener, IntPtr emitter, uint flags,
+            IntPtr dspSettingsPtr)
+        {
+
+        }
+
+        public IntPtr GetInstance()
+        {
+            return OneAPI.X3DAudioCore_GetInstance();
+        }
     }
 
     public class SoundBuffer :OneObject
@@ -267,9 +293,9 @@ namespace OneSound
         }
     }
 
-    public class Listener : OneObject
+    public class OneListener : OneObject
     {
-        public Listener()
+        public OneListener()
         {
             Handle= OneAPI.Listener_Create();
         }
@@ -307,14 +333,14 @@ namespace OneSound
             set { OneAPI.Listener_SetSpeaker(Handle, value); }
         }
 
-        public void AddSound(IntPtr sound)
+        public void AddSound(Sound3D sound)
         {
-            OneAPI.Listener_AddSound(Handle, sound);
+            OneAPI.Listener_AddSound(Handle, sound.Handle);
         }
 
-        public void RemoveSound(IntPtr sound)
+        public void RemoveSound(Sound3D sound)
         {
-            OneAPI.Listener_RemoveSound(Handle, sound);
+            OneAPI.Listener_RemoveSound(Handle, sound.Handle);
         }
     }
 
@@ -471,8 +497,9 @@ namespace OneSound
             bool play, float volume);
 
         [DllImport(dllName)]
-        public static extern void Sound3D_SetSourcePosition(IntPtr handle, Vector position); 
-
+        public static extern void Sound3D_SetSourcePosition(IntPtr handle, Vector position);
+        [DllImport(dllName)]
+        public static extern IntPtr Sound3D_GetDspSetting(IntPtr handle);
         [DllImport(dllName)]
         public static extern void Sound3D_Destroy(IntPtr handle);
 
@@ -517,6 +544,11 @@ namespace OneSound
         public static extern int SoundObject_GetPlaybackSize(IntPtr so);
         [DllImport(dllName)]
         public static extern int SoundObject_GetSamplesPerSecond(IntPtr so);
+        [DllImport(dllName)]
+        public static extern IntPtr SoundObject_GetEmitter(IntPtr so);
+        [DllImport(dllName)]
+        public static extern void SoundObject_SetOutputMatrix(IntPtr so, uint SourceChannels, uint DestinationChannels,
+            [In, Out] float[] pLevelMatrix);
 
         [DllImport(dllName)]
         public static extern IntPtr Listener_Create();
@@ -539,6 +571,15 @@ namespace OneSound
         public static extern void Listener_AddSound(IntPtr listener, IntPtr sound);
         [DllImport(dllName)]
         public static extern void Listener_RemoveSound(IntPtr listener, IntPtr sound);
+
+
+        [DllImport(dllName)]
+        public static extern void X3DAudioCore_XACT3DCalculate(IntPtr X3DInstance, IntPtr pListener, IntPtr pEmitter, IntPtr pDSPSettings);
+        [DllImport(dllName)]
+        public static extern void X3DAudioCore_X3DAudioCalculate(IntPtr instance, IntPtr listener, IntPtr emitter, uint flags,
+            IntPtr dspSettingsPtr);
+        [DllImport(dllName)]
+        public static extern IntPtr X3DAudioCore_GetInstance();
     }
 }
 

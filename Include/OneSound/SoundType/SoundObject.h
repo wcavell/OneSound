@@ -20,8 +20,8 @@ namespace onesnd
     class ONE_SOUND_API SoundObject
     {
     protected:
-        std::shared_ptr<SoundBuffer> sound;					// sound buffer/stream to use
-
+        //std::shared_ptr<SoundBuffer> sound;					// sound buffer/stream to use
+        SoundBuffer* sound;
         IXAudio2SourceVoice* source;		// the sound source generator (interfaces XAudio2 to generate waveforms)
         SoundObjectState* state;			// Holds and manages the current state of a SoundObject
         float* channelMatrix;
@@ -40,7 +40,7 @@ namespace onesnd
         * @param loop True if sound looping is wished
         * @param play True if sound should start playing immediatelly
         */
-        SoundObject(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
+        SoundObject(SoundBuffer* sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
         ~SoundObject(); // unhooks any sounds and frees resources
 
     public:
@@ -49,17 +49,17 @@ namespace onesnd
         * @param sound Sound to bind to this object. Can be NULL to unbind sounds from this object.
         * @param loop [optional] Sets the sound looping or non-looping. Streams cannot be looped.
         */
-        void setSound(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
+        void setSound(SoundBuffer*, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
 
         /**
         * @return Current soundbuffer set to this soundobject
         */
-        inline std::shared_ptr<SoundBuffer> getSound() const { return sound; }
+        inline SoundBuffer* getSound() const { return sound; }
 
         inline IXAudio2SourceVoice* getSource() const { return source; }
         inline float* getChannelMatrix()const { return channelMatrix; }
         inline uint32_t* getChannelMap()const { return channelMap;}
-        inline X3DAUDIO_EMITTER getEmitter()const { return  emitter; }
+        inline X3DAUDIO_EMITTER* getEmitter()  { return  &emitter; }
         /**
         * @return TRUE if this SoundObject has an attached SoundStream that can be streamed.
         */
@@ -80,7 +80,7 @@ namespace onesnd
         * @param sound SoundBuffer or SoundStream to start playing
         * @param loop [false] Sets if the sound is looping or not. Streams are never loopable.
         */
-        void play(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
+        void play(SoundBuffer* sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
 
         /**
         * Stops playing the sound and unloads streaming buffers.
@@ -161,6 +161,8 @@ namespace onesnd
         * @return Number of samples processed every second (aka SampleRate or Frequency)
         */
         int getSamplesPerSecond() const;  
+
+        void setOutputMatrix(UINT32 SourceChannels, UINT32 DestinationChannels, float* pLevelMatrix);
     protected: 
         virtual void onSoundChanged();
 

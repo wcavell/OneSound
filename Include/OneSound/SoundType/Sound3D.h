@@ -20,7 +20,7 @@ namespace onesnd
         Sound3D();
         ~Sound3D();
 
-        Sound3D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
+        Sound3D(SoundBuffer* sound, const bool& loop = false, const bool& play = false, const float& volume = 1.f);
           
         void setSourcePosition(const X3DAUDIO_VECTOR& position); 
         void removeSpeaker(const uint32_t& speaker) const;

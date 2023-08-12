@@ -10,9 +10,7 @@
 namespace onesnd
 {
     Sound3D::Sound3D() : SoundObject()
-    {
-        soundChannel = 1;
-
+    {   
         ZeroMemory(&dspSettings, sizeof(X3DAUDIO_DSP_SETTINGS));
         dspSettings.SrcChannelCount = 1;
         dspSettings.DstChannelCount = 2;
@@ -27,10 +25,9 @@ namespace onesnd
             dspSettings.pMatrixCoefficients = nullptr;
         }
     }
-    Sound3D::Sound3D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop, const bool& play, const float& volume) : SoundObject(sound, loop, play, volume)
+    Sound3D::Sound3D(SoundBuffer* sound, const bool& loop, const bool& play, const float& volume) : SoundObject(sound, loop, play, volume)
     {
-        soundChannel = 1;
-
+         
         ZeroMemory(&dspSettings, sizeof(X3DAUDIO_DSP_SETTINGS));
         dspSettings.SrcChannelCount = 1;
         dspSettings.DstChannelCount = 2;

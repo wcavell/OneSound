@@ -32,7 +32,7 @@ namespace onesnd
         setChannelMap();
     }
 
-    SoundObject::SoundObject(const std::shared_ptr<SoundBuffer>& sound, const bool& looping, const bool& playing, const float& volume) :
+    SoundObject::SoundObject(SoundBuffer* sound, const bool& looping, const bool& playing, const float& volume) :
         sound(nullptr), 
         source(nullptr), 
         state(nullptr),
@@ -83,7 +83,7 @@ namespace onesnd
       
     }
 
-    void SoundObject::setSound(const std::shared_ptr<SoundBuffer>& sound_buf, const bool& loop, const bool& play, const float& volume)
+    void SoundObject::setSound(SoundBuffer* sound_buf, const bool& loop, const bool& play, const float& volume)
     {
         if (sound) 
             sound->UnbindSource(this); // unbind old, but still keep it around
@@ -118,7 +118,7 @@ namespace onesnd
 
     bool SoundObject::isEOS() const
     {
-        return sound && sound->IsStream() && ((SoundStream*)sound.get())->IsEOS(this);
+        return sound && sound->IsStream() && ((SoundStream*)sound)->IsEOS(this);
     }
 
     void SoundObject::play()
@@ -140,7 +140,7 @@ namespace onesnd
         }
     }
 
-    void SoundObject::play(const std::shared_ptr<SoundBuffer>& sound, const bool& loop, const bool& play, const float& volume)
+    void SoundObject::play(SoundBuffer* sound, const bool& loop, const bool& play, const float& volume)
     {
         if (sound)
             setSound(sound);
@@ -258,7 +258,7 @@ namespace onesnd
             return;
         
         if (sound->IsStream()) // stream objects
-            ((SoundStream*)sound.get())->Seek(this, seekpos); // seek the stream
+            ((SoundStream*)sound)->Seek(this, seekpos); // seek the stream
         else // single buffer objects
         {
             // first create a shallow copy of the xaBuffer:
@@ -298,6 +298,11 @@ namespace onesnd
             channelMatrix = nullptr;
         }
         channelMatrix = new float[soundChannel * outChannelCount];
+        int length = soundChannel * outChannelCount;
+        for (int i = 0; i < length; i++)
+        {
+            channelMatrix[i] = 0;
+        }
     }
     void SoundObject::setChannelMap()
     {
@@ -364,4 +369,8 @@ namespace onesnd
         }
     }
 
+    void SoundObject::setOutputMatrix(UINT32 SourceChannels, UINT32 DestinationChannels, float* pLevelMatrix) {
+        if (source)
+            source->SetOutputMatrix(nullptr, soundChannel, DestinationChannels, pLevelMatrix);
+    }
 }

@@ -15,7 +15,7 @@ namespace onesnd
     {
     }
 
-    Sound2D::Sound2D(const std::shared_ptr<SoundBuffer>& sound, const bool& loop, const bool& play, const float& volume) : SoundObject(sound, loop, play, volume),
+    Sound2D::Sound2D(SoundBuffer* sound, const bool& loop, const bool& play, const float& volume) : SoundObject(sound, loop, play, volume),
         channelMask(0),
         maskVolume(nullptr),
         maskCount(-1)

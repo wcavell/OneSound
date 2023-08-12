@@ -57,8 +57,8 @@
 #if defined(_XBOX)
     #include <vectorintrinsics.h>
 #endif
-#include <d3d9types.h> // for D3DVECTOR
-
+//#include <d3d9types.h> // for D3DVECTOR
+#include <DirectXMath.h>
 // speaker geometry configuration flags, specifies assignment of channels to speaker positions, defined as per WAVEFORMATEXTENSIBLE.dwChannelMask
 #if !defined(_SPEAKER_POSITIONS_)
     #define _SPEAKER_POSITIONS_
@@ -133,8 +133,8 @@
 
 // primitive types
 typedef float FLOAT32; // 32-bit IEEE float
-typedef D3DVECTOR X3DAUDIO_VECTOR; // float 3D vector
-
+//typedef D3DVECTOR X3DAUDIO_VECTOR; // float 3D vector
+typedef DirectX::XMFLOAT3 X3DAUDIO_VECTOR; // float 3D vector
 // instance handle of precalculated constants
 typedef BYTE X3DAUDIO_HANDLE[X3DAUDIO_HANDLE_BYTESIZE];
 
