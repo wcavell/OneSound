@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Managed")]
+[assembly: AssemblyTitle("XAudio")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Managed")]
+[assembly: AssemblyProduct("XAudio")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("d43f2bbf-dc80-42a8-9324-5a3fb251a830")]
+[assembly: Guid("a6bdd6bf-2f33-4ad4-b79b-15f5e4bf1733")]
 
 // 程序集的版本信息由下列四个值组成: 
 //
