@@ -307,12 +307,15 @@ namespace onesnd
     void SoundObject::setChannelMap()
     {
         outChannelCount = XAudio2Device::instance().getChannelCount();
+        if (outChannelCount == 0)
+            outChannelCount = 2;
         if (outChannelCount > 0)
             channelMap = new uint32_t[outChannelCount];
         matrixAvailable = true;
 
         switch (outChannelCount)
         {
+        case 0:
             //Speaker   Left Source           Right Source
         case 2://2.0 
             channelMap[0] = SPEAKER_FRONT_LEFT;

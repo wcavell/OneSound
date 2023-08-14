@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using CSCore.Utils;
+using XAudio.Utils;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    internal struct CurveNative
+    public struct CurveNative
     {
         public IntPtr CurvePointsPtr;
         public int PointCount;

@@ -1,18 +1,18 @@
 using System;
 using System.Runtime.InteropServices;
-using CSCore.Utils;
+using XAudio.Utils;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     /// <summary>
     /// Defines a single-point or multiple-point 3D audio source that is used with an arbitrary number of sound channels.
     /// </summary>
     public class Emitter
     {
-        internal EmitterNative NativeInstance = new EmitterNative();
+        public EmitterNative NativeInstance = new EmitterNative();
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct EmitterNative
+        public struct EmitterNative
         {
             public IntPtr ConePtr;
             public Vector3 OrientFront;

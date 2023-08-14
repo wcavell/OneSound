@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSCore.Utils
+namespace XAudio.Utils
 {
 	internal static class ILUtils
 	{

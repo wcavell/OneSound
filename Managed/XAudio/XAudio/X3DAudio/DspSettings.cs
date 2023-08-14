@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     /// <summary>
     /// Receives the results from a call to <see cref="X3DAudioCore.X3DAudioCalculate(Listener,Emitter,CalculateFlags,DspSettings)"/>. 
@@ -10,7 +10,7 @@ namespace CSCore.XAudio2.X3DAudio
     public sealed class DspSettings
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct DspSettingsNative
+        public struct DspSettingsNative
         {
             /// <summary>
             ///     Caller provided array that will be initialized with the volume level of each source channel present in each

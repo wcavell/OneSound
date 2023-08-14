@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     /// <summary>
     /// Defines a DSP setting at a given normalized distance.

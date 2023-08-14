@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CSCore.Utils
+namespace XAudio.Utils
 {
     /// <summary>
     /// Defines a 3D vector.

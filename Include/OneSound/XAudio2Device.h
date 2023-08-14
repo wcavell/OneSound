@@ -22,6 +22,7 @@ namespace onesnd
 {
     class SoundBuffer;
     class AudioStream;
+    class CMMNotificationClient;
 
     class XAudio2Device
     {
@@ -62,6 +63,7 @@ namespace onesnd
         X3DAUDIO_LISTENER xListener;
         unsigned int leftSpeaker;
         unsigned int rightSpeaker;
+        CMMNotificationClient* mmClient;
     	
     };
     

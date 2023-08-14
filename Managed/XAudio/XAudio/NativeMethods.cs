@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XAudio
 {
-    public class Class1
+    internal class NativeMethods
     {
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     /// <summary>
     /// Specifies directionality for a single-channel non-Low-Frequency-Effect emitter by scaling DSP behavior with respect to the emitter's orientation.

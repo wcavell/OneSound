@@ -5,18 +5,199 @@
  */
 
 #include "OneSound\XAudio2Device.h"
-
 #include "OneSound\StreamType\AudioStream.h"
+#include <iostream>
+#include <mmdeviceapi.h>  
+#include <Functiondiscoverykeys_devpkey.h>
+
+using namespace std;
 
 #define LEFT_SPEAKER        SPEAKER_FRONT_LEFT | SPEAKER_FRONT_CENTER | SPEAKER_BACK_LEFT | SPEAKER_SIDE_LEFT
 #define RIGHT_SPEAKER       SPEAKER_FRONT_RIGHT | SPEAKER_LOW_FREQUENCY | SPEAKER_BACK_RIGHT | SPEAKER_SIDE_RIGHT
+
+#define SAFE_RELEASE(punk)  \
+ if ((punk) != NULL)  \
+ { (punk)->Release(); (punk) = NULL; }   
+
+
 namespace onesnd
 {
+    class CMMNotificationClient : public IMMNotificationClient
+    {
+    public:
+        IMMDeviceEnumerator* m_pEnumerator;
+        CMMNotificationClient() :
+            _cRef(1),
+            m_pEnumerator(NULL)
+        {
+            // 初始化COM  
+            //::CoInitialize(NULL);
+            HRESULT hr = S_OK;
+
+            // 创建接口
+            hr = CoCreateInstance(
+                __uuidof(MMDeviceEnumerator), NULL,
+                CLSCTX_ALL, __uuidof(IMMDeviceEnumerator),
+                (void**)&m_pEnumerator);
+
+            if (hr == S_OK)
+            {
+	            std::cout << "接口创建成功" << endl;
+            }
+            else
+            {
+                cout << "接口创建失败" << endl;
+            }
+
+            // 注册事件
+            hr = m_pEnumerator->RegisterEndpointNotificationCallback((IMMNotificationClient*)this);
+            if (hr == S_OK)
+            {
+                cout << "注册成功" << endl;
+            }
+            else
+            {
+                cout << "注册失败" << endl;
+            }
+        }
+
+        ~CMMNotificationClient()
+        {
+            SAFE_RELEASE(m_pEnumerator)
+                ::CoUninitialize();
+        }
+
+        // IUnknown methods -- AddRef, Release, and QueryInterface   
+    private:
+        LONG _cRef;
+
+        // Private function to print device-friendly name
+        HRESULT _PrintDeviceName(LPCWSTR  pwstrId);
+
+        ULONG STDMETHODCALLTYPE AddRef()
+        {
+            return InterlockedIncrement(&_cRef);
+        }
+
+        ULONG STDMETHODCALLTYPE Release()
+        {
+            ULONG ulRef = InterlockedDecrement(&_cRef);
+            if (0 == ulRef)
+            {
+                delete this;
+            }
+            return ulRef;
+        }
+
+        HRESULT STDMETHODCALLTYPE QueryInterface(
+            REFIID riid, VOID** ppvInterface)
+        {
+            if (IID_IUnknown == riid)
+            {
+                AddRef();
+                *ppvInterface = (IUnknown*)this;
+            }
+            else if (__uuidof(IMMNotificationClient) == riid)
+            {
+                AddRef();
+                *ppvInterface = (IMMNotificationClient*)this;
+            }
+            else
+            {
+                *ppvInterface = NULL;
+                return E_NOINTERFACE;
+            }
+            return S_OK;
+        }
+
+        HRESULT STDMETHODCALLTYPE OnDefaultDeviceChanged(
+            EDataFlow flow, ERole role,
+            LPCWSTR pwstrDeviceId)
+        {
+            cout << "OnDefaultDeviceChanged:"<< endl;
+            cout << pwstrDeviceId << endl;
+            return S_OK;
+        }
+
+        HRESULT STDMETHODCALLTYPE OnDeviceAdded(LPCWSTR pwstrDeviceId)
+        {
+            cout << "OnDeviceAdded" << endl;
+            return S_OK;
+        };
+
+        HRESULT STDMETHODCALLTYPE OnDeviceRemoved(LPCWSTR pwstrDeviceId)
+        {
+            cout << "OnDeviceRemoved" << endl;
+            return S_OK;
+        }
+
+        HRESULT STDMETHODCALLTYPE OnDeviceStateChanged(
+            LPCWSTR pwstrDeviceId,
+            DWORD dwNewState)
+        {
+            cout << "OnDeviceStateChanged" << endl;
+            return S_OK;
+        }
+
+        HRESULT STDMETHODCALLTYPE OnPropertyValueChanged(
+            LPCWSTR pwstrDeviceId,
+            const PROPERTYKEY key)
+        {
+            cout << "OnPropertyValueChanged" << endl;
+            _PrintDeviceName(pwstrDeviceId);
+            return S_OK;
+        }
+    };
+
+    // Given an endpoint ID string, print the friendly device name.
+    HRESULT CMMNotificationClient::_PrintDeviceName(LPCWSTR pwstrId)
+    {
+        HRESULT hr = S_OK;
+        IMMDevice* pDevice = NULL;
+        IPropertyStore* pProps = NULL;
+        PROPVARIANT varString;
+
+        CoInitialize(NULL);
+        PropVariantInit(&varString);
+
+        if (m_pEnumerator == NULL)
+        {
+            // Get enumerator for audio endpoint devices.
+            hr = CoCreateInstance(__uuidof(MMDeviceEnumerator),
+                NULL, CLSCTX_INPROC_SERVER,
+                __uuidof(IMMDeviceEnumerator),
+                (void**)&m_pEnumerator);
+        }
+        if (hr == S_OK)
+        {
+            hr = m_pEnumerator->GetDevice(pwstrId, &pDevice);
+        }
+        if (hr == S_OK)
+        {
+            hr = pDevice->OpenPropertyStore(STGM_READ, &pProps);
+        }
+        if (hr == S_OK)
+        {
+            // Get the endpoint device's friendly-name property.
+            hr = pProps->GetValue(PKEY_Device_FriendlyName, &varString);
+        }
+        printf("----------------------\nDevice name: \"%S\"\n"
+            "  Endpoint ID string: \"%S\"\n",
+            (hr == S_OK) ? varString.pwszVal : L"null device",
+            (pwstrId != NULL) ? pwstrId : L"null ID");
+
+        PropVariantClear(&varString);
+
+        SAFE_RELEASE(pProps)
+            SAFE_RELEASE(pDevice)
+            return hr;
+    }
+
     XAudio2Device::XAudio2Device() :
         leftSpeaker(LEFT_SPEAKER),
         rightSpeaker(RIGHT_SPEAKER)
     {
-
+        SetConsoleOutputCP(CP_UTF8);
     }
 
     void XAudio2Device::initialize()
@@ -40,6 +221,8 @@ namespace onesnd
         ZeroMemory(&dd, sizeof(dd));
         xEngine->GetDeviceDetails(0, &dd);
         channelCount = dd.OutputFormat.Format.nChannels;
+        mmClient = new CMMNotificationClient();
+
     }
 
     void XAudio2Device::finalize()
@@ -52,6 +235,11 @@ namespace onesnd
 
         if (xEngine != nullptr)
             xEngine = nullptr;
+        if(mmClient!=nullptr)
+        {
+            delete mmClient;
+            mmClient = nullptr;
+        }
     }
 
     XABuffer* XABuffer::create(SoundBuffer* ctx, int size, AudioStream* strm, int* pos)

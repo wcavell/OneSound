@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
-using CSCore.Utils;
+using XAudio.Utils;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     /// <summary>
     ///     Defines a point of 3D audio reception.
@@ -13,7 +13,7 @@ namespace CSCore.XAudio2.X3DAudio
     /// </remarks>
     public class Listener
     {
-        internal ListenerNative NativeInstance = new ListenerNative();
+        public ListenerNative NativeInstance = new ListenerNative();
 
         /// <summary>
         ///     Gets or sets the orientation of front direction. When <see cref="Cone" /> is NULL OrientFront is used only for
@@ -65,7 +65,7 @@ namespace CSCore.XAudio2.X3DAudio
         public Cone? Cone { get; set; }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct ListenerNative
+        public struct ListenerNative
         {
             public Vector3 OrientFront;
             public Vector3 OrientTop;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSCore.XAudio2.X3DAudio
+namespace XAudio.X3DAudio
 {
     /// <summary>
     /// Flags which define calculate flags for calculating the 3D audio parameters.
