@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace XAudio
     {
         public SoundBuffer()
         {
-            Handle = NativeMethods.SoundBuffer_Create();
+            Handle = NativeMethods.SoundBuffer_Create(); 
         }
 
         public SoundBuffer(string file)

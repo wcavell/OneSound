@@ -65,7 +65,7 @@ namespace XAudio.X3DAudio
         public Cone? Cone { get; set; }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct ListenerNative
+        internal struct ListenerNative
         {
             public Vector3 OrientFront;
             public Vector3 OrientTop;

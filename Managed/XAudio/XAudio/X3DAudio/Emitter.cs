@@ -9,10 +9,10 @@ namespace XAudio.X3DAudio
     /// </summary>
     public class Emitter
     {
-        public EmitterNative NativeInstance = new EmitterNative();
+        internal EmitterNative NativeInstance = new EmitterNative();
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct EmitterNative
+        internal struct EmitterNative
         {
             public IntPtr ConePtr;
             public Vector3 OrientFront;

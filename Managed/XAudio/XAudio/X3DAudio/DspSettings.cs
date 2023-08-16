@@ -10,7 +10,7 @@ namespace XAudio.X3DAudio
     public sealed class DspSettings
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct DspSettingsNative
+        internal struct DspSettingsNative
         {
             /// <summary>
             ///     Caller provided array that will be initialized with the volume level of each source channel present in each

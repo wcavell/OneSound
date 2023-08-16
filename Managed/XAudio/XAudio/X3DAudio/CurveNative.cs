@@ -7,7 +7,7 @@ using XAudio.Utils;
 namespace XAudio.X3DAudio
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct CurveNative
+    internal struct CurveNative
     {
         public IntPtr CurvePointsPtr;
         public int PointCount;

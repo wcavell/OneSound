@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using XAudio.Utils;
 using XAudio.X3DAudio;
+using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
 namespace XAudio
 {
@@ -103,16 +106,162 @@ namespace XAudio
         }
 
 
-        public static void XACT3DCalculate(IntPtr X3DInstance, IntPtr pListener, IntPtr pEmitter,
-            IntPtr pDSPSettings)
+        public static unsafe void XACT3DCalculate(Listener listener, Emitter emitter,
+            DspSettings settings)
         {
-            NativeMethods.X3DAudioCore_XACT3DCalculate(X3DInstance, pListener, pEmitter, pDSPSettings);
+            var instance = GetX3DAudioInstance();
+            //NativeMethods.X3DAudioCore_XACT3DCalculate(instance, pListener, pEmitter, pDSPSettings);
+
+            if (settings == null)
+                throw new ArgumentNullException("settings");
+            if (listener == null)
+                throw new ArgumentNullException("listener");
+            if (emitter == null)
+                throw new ArgumentNullException("emitter"); 
+
+            if (emitter.ChannelAzimuths == null)
+                throw new ArgumentException("No ChannelAzimuths set for the specified emitter. The ChannelAzimuths property must not be null if the ChannelCount of the emitter is bigger than 1.");
+
+            DspSettings.DspSettingsNative nativeSettings = settings.NativeInstance;
+            Listener.ListenerNative nativeListener = listener.NativeInstance;
+            Emitter.EmitterNative nativeEmitter = emitter.NativeInstance;
+
+            #region setup listener
+
+            //setup listener:
+            Cone listenerCone = listener.Cone.HasValue ? listener.Cone.Value : default(Cone);
+            IntPtr listenerConePtr = listener.Cone.HasValue ? (IntPtr)(&listenerCone) : IntPtr.Zero;
+            nativeListener.ConePtr = listenerConePtr;
+
+            #endregion
+
+            #region setup emitter
+
+            //setup emitter
+            IntPtr channelAzimuthsPtr = IntPtr.Zero;
+            if (emitter.ChannelAzimuths != null && emitter.ChannelAzimuths.Length > 0 && emitter.ChannelCount > 0)
+            {
+                const int sizeOfFloat = sizeof(float);
+                int channelAzimuthsSize = sizeOfFloat *
+                                          Math.Min(emitter.ChannelCount, emitter.ChannelAzimuths.Length);
+                channelAzimuthsPtr = Marshal.AllocHGlobal(channelAzimuthsSize);
+                ILUtils.WriteToMemory(channelAzimuthsPtr, emitter.ChannelAzimuths, 0,
+                    channelAzimuthsSize / sizeOfFloat);
+            }
+
+            Cone emitterCone = emitter.Cone.HasValue ? emitter.Cone.Value : default(Cone);
+            IntPtr emitterConePtr = emitter.Cone.HasValue ? (IntPtr)(&emitterCone) : IntPtr.Zero;
+
+            nativeEmitter.ChannelAzimuthsPtr = channelAzimuthsPtr;
+            nativeEmitter.ConePtr = emitterConePtr;
+            nativeEmitter.LFECurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.LowFrequencyEffectCurve);
+            nativeEmitter.LPFDirectCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.LowPassFilterDirectCurve);
+            nativeEmitter.LPFReverbCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.LowPassFilterReverbCurve);
+            nativeEmitter.ReverbCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.ReverbCurve);
+            nativeEmitter.VolumeCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.VolumeCurve);
+
+            #endregion
+
+            #region setup settings
+
+            //setup settings
+            fixed (void* pmc = settings.MatrixCoefficients, pdt = settings.DelayTimes)
+            {
+                nativeSettings.MatrixCoefficientsPtr = new IntPtr(pmc);
+                nativeSettings.DelayTimesPtr = new IntPtr(pdt);
+
+                #endregion
+                 
+                NativeMethods.X3DAudioCore_XACT3DCalculate(instance, (IntPtr)(&nativeListener),
+                    (IntPtr)(&nativeEmitter), new IntPtr(&nativeSettings));
+
+                settings.NativeInstance = nativeSettings;
+            }
+
+            nativeEmitter.FreeMemory();
         }
 
-        public static void X3DAudioCalculate(IntPtr instance, IntPtr listener, IntPtr emitter, CalculateFlags flags,
-            IntPtr dspSettingsPtr)
+        public static unsafe void X3DAudioCalculate(Listener listener, Emitter emitter, CalculateFlags flags,
+            DspSettings settings)
         {
-            NativeMethods.X3DAudioCore_X3DAudioCalculate(instance, listener, emitter, flags, dspSettingsPtr);
+            var instance = GetX3DAudioInstance();
+            
+            if (settings == null)
+                throw new ArgumentNullException("settings");
+            if (listener == null)
+                throw new ArgumentNullException("listener");
+            if (emitter == null)
+                throw new ArgumentNullException("emitter");
+            if ((int)flags == 0)
+                throw new ArgumentOutOfRangeException("flags");
+
+            if (emitter.ChannelCount > 1 && emitter.ChannelAzimuths == null)
+                throw new ArgumentException("No ChannelAzimuths set for the specified emitter. The ChannelAzimuths property must not be null if the ChannelCount of the emitter is bigger than 1.");
+
+            DspSettings.DspSettingsNative nativeSettings = settings.NativeInstance;
+            Listener.ListenerNative nativeListener = listener.NativeInstance;
+            Emitter.EmitterNative nativeEmitter = emitter.NativeInstance;
+
+            #region setup listener
+
+            //setup listener:
+            Cone listenerCone = listener.Cone.HasValue ? listener.Cone.Value : default(Cone);
+            IntPtr listenerConePtr = listener.Cone.HasValue ? (IntPtr)(&listenerCone) : IntPtr.Zero;
+            nativeListener.ConePtr = listenerConePtr;
+
+            #endregion
+
+            #region setup emitter
+
+            //setup emitter
+            IntPtr channelAzimuthsPtr = IntPtr.Zero;
+            if (emitter.ChannelAzimuths != null && emitter.ChannelAzimuths.Length > 0 && emitter.ChannelCount > 0)
+            {
+                const int sizeOfFloat = sizeof(float);
+                int channelAzimuthsSize = sizeOfFloat *
+                                          Math.Min(emitter.ChannelCount, emitter.ChannelAzimuths.Length);
+                channelAzimuthsPtr = Marshal.AllocHGlobal(channelAzimuthsSize);
+                ILUtils.WriteToMemory(channelAzimuthsPtr, emitter.ChannelAzimuths, 0,
+                    channelAzimuthsSize / sizeOfFloat);
+            }
+
+            Cone emitterCone = emitter.Cone.HasValue ? emitter.Cone.Value : default(Cone);
+            IntPtr emitterConePtr = emitter.Cone.HasValue ? (IntPtr)(&emitterCone) : IntPtr.Zero;
+
+            nativeEmitter.ChannelAzimuthsPtr = channelAzimuthsPtr;
+            nativeEmitter.ConePtr = emitterConePtr;
+            nativeEmitter.LFECurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.LowFrequencyEffectCurve);
+            nativeEmitter.LPFDirectCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.LowPassFilterDirectCurve);
+            nativeEmitter.LPFReverbCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.LowPassFilterReverbCurve);
+            nativeEmitter.ReverbCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.ReverbCurve);
+            nativeEmitter.VolumeCurvePtr = CurveNative.AllocMemoryAndBuildCurve(emitter.VolumeCurve);
+
+            #endregion
+
+            #region setup settings
+
+            //setup settings
+            fixed (void* pmc = settings.MatrixCoefficients, pdt = settings.DelayTimes)
+            {
+                nativeSettings.MatrixCoefficientsPtr = new IntPtr(pmc);
+                nativeSettings.DelayTimesPtr = new IntPtr(pdt);
+
+                #endregion
+
+                //fixed (void* p = &_handle)
+                //{
+                //    X3DAudioCalculate(new IntPtr(p), (IntPtr)(&nativeListener),
+                //        (IntPtr)(&nativeEmitter), flags,
+                //        new IntPtr(&nativeSettings));
+                //}
+                NativeMethods.X3DAudioCore_X3DAudioCalculate(instance, (IntPtr)(&nativeListener),
+                    (IntPtr)(&nativeEmitter), flags,
+                    new IntPtr(&nativeSettings));
+
+                settings.NativeInstance = nativeSettings;
+            }
+
+            nativeEmitter.FreeMemory();
         }
 
         public static IntPtr GetX3DAudioInstance()
