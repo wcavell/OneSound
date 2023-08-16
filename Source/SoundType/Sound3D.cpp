@@ -84,13 +84,13 @@ namespace onesnd
                 {
                     if (channelMap[i] & lSpeaker)
                     {
-                        channelMatrix[i * 2 + 0] = channelMatrix[i] = lVolume;
-                        channelMatrix[i * 2 + 1] = channelMatrix[i] = 0;
+                        channelMatrix[i * 2 + 0] = lVolume;
+                        channelMatrix[i * 2 + 1] =  0;
                     }
                     else if(channelMap[i]&rSpeaker)
                     {
-                        channelMatrix[i * 2 + 0] = channelMatrix[i] = 0;
-                        channelMatrix[i * 2 + 1] = channelMatrix[i] = rVolume;
+                        channelMatrix[i * 2 + 0] = 0;
+                        channelMatrix[i * 2 + 1] = rVolume;
                     }
 
                 } 

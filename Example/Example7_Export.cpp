@@ -29,16 +29,17 @@ int main()
         // Any sound plays in another thread.
         //auto sound_1 = make_unique<Sound2D>(make_unique<SoundBuffer>("Sound\\shot.wav"),false,true,0.3f);
         auto sb = SoundBuffer_Create_ByPath("Sound\\Crysis 1.ogg");
-        auto sound = Sound3D_Create_ByBuffer(sb, false, true, 0.8f); 
-        X3DAUDIO_VECTOR sp{ 10.0F, 0.0F, 10.0F };
+        auto sound = Sound3D_Create_ByBuffer(sb, false, true, 0.8f);
+        //sound->setSpeaker(SPEAKER_FRONT_LEFT);
+        X3DAUDIO_VECTOR sp{ 5.0F, 0.0F, 5.0F };
         X3DAUDIO_VECTOR zerop{ 0.0F, 0.0F, 0.0F };
         X3DAUDIO_VECTOR top{ 0.0F, 1.0F, 0.0F };
         X3DAUDIO_VECTOR front{ 0.0F, 0.0F, 1.0F };
         sound->setSourcePosition(sp);
         auto listener = Listener_Create();
-        listener->setSpeaker(SPEAKER_FRONT_LEFT | SPEAKER_LOW_FREQUENCY);
+        listener->setSpeaker(SPEAKER_FRONT_LEFT);
         listener->addSound(sound);
-        listener->setPositionOrientation(X3DAUDIO_VECTOR(0,0,0), top, front);
+        listener->setPositionOrientation(X3DAUDIO_VECTOR(0.0f,0.0f,0.0f), top, front);
         listener->setListenerVelocity(X3DAUDIO_VECTOR{ 0.0f,0.0f,0.0f });
         listener->update();
         
