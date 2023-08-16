@@ -50,8 +50,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="NativeObject.cs" />
     <Compile Include="OneAudio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sound2D.cs" />
+    <Compile Include="Sound3D.cs" />
+    <Compile Include="SoundBuffer.cs" />
+    <Compile Include="SoundListener.cs" />
+    <Compile Include="SoundObject.cs" />
+    <Compile Include="SoundStream.cs" />
+    <Compile Include="Speaker.cs" />
     <Compile Include="Utils\ILUtils.cs" />
     <Compile Include="X3DAudio\CalculateFlags.cs" />
     <Compile Include="X3DAudio\Cone.cs" />

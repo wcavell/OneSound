@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace XAudio.Utils
+namespace XAudio
 {
     /// <summary>
     /// Defines a 3D vector.
@@ -58,6 +58,10 @@ namespace XAudio.Utils
             return "{" + X + ";" + Y + ";" + Z + "}";
         }
 
+        public static implicit operator UnityEngine.Vector3(XAudio.Vector3 v3)
+        {
+            return v3;
+        } 
         //TODO: Add some mathematical stuff.
     }
 }

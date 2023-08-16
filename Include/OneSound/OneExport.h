@@ -10,7 +10,7 @@ extern "C" {
     ONE_SOUND_API char* OneSound_GetLibraryVersionStr(OneSound* one);
     ONE_SOUND_API char* OneSound_GetLibraryStatus(OneSound* one);
     ONE_SOUND_API char* OneSound_GetLibraryName(OneSound* one);
-    ONE_SOUND_API int32_t OneSound_GetOutputChannels(OneSound* one);
+    ONE_SOUND_API int32_t OneSound_GetOutputChannels();
     ONE_SOUND_API void OneSound_SetLeftSpeakerMap(uint32_t lSpeaker);
     ONE_SOUND_API void OneSound_SetRightSpeakerMap(uint32_t rSpeaker);
     ONE_SOUND_API int32_t OneSound_GetLeftSpeakerMap();

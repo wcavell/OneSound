@@ -44,6 +44,7 @@ namespace onesnd
         IXAudio2* getEngine() const { return xEngine; }
         IXAudio2MasteringVoice* getMaster() const { return xMaster; }
         unsigned int getChannelCount() const { return channelCount; }
+        unsigned int refreshChannelCount();
         inline unsigned int getLeftSpeaker()const { return leftSpeaker; }
         inline unsigned int getRightSpeaker()const { return  rightSpeaker; }         
         void setLeftSpeaker(const unsigned int &lSpeaker)
@@ -64,6 +65,7 @@ namespace onesnd
         unsigned int leftSpeaker;
         unsigned int rightSpeaker;
         CMMNotificationClient* mmClient;
+        XAUDIO2_DEVICE_DETAILS deviceDetails;
     	
     };
     

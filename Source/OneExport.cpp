@@ -24,8 +24,8 @@ extern "C"
 	{
 		return one->getLibraryName().data();
 	}
-	ONE_SOUND_API int32_t OneSound_GetOutputChannels(OneSound* one) {
-		return one->getOutputChannels();
+	ONE_SOUND_API int32_t OneSound_GetOutputChannels() {
+		return XAudio2Device::instance().refreshChannelCount();
 	}
 	ONE_SOUND_API void OneSound_SetLeftSpeakerMap(uint32_t lSpeaker)
 	{

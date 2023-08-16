@@ -67,13 +67,13 @@ namespace OneSound
         {
             if (!this.Disposed)
             { 
-                CloseHandle(Handle);
+                CloseHandle();
                 Handle = IntPtr.Zero; 
                 Disposed = true;
             }
         }
 
-        protected virtual void CloseHandle(IntPtr handle)
+        protected virtual void CloseHandle()
         {
 
         }

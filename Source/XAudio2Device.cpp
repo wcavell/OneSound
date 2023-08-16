@@ -114,8 +114,7 @@ namespace onesnd
             EDataFlow flow, ERole role,
             LPCWSTR pwstrDeviceId)
         {
-            cout << "OnDefaultDeviceChanged:"<< endl;
-            cout << pwstrDeviceId << endl;
+            cout << "OnDefaultDeviceChanged:"<< endl; 
             return S_OK;
         }
 
@@ -143,55 +142,10 @@ namespace onesnd
             LPCWSTR pwstrDeviceId,
             const PROPERTYKEY key)
         {
-            cout << "OnPropertyValueChanged" << endl;
-            _PrintDeviceName(pwstrDeviceId);
+            cout << "OnPropertyValueChanged" << endl; 
             return S_OK;
         }
-    };
-
-    // Given an endpoint ID string, print the friendly device name.
-    HRESULT CMMNotificationClient::_PrintDeviceName(LPCWSTR pwstrId)
-    {
-        HRESULT hr = S_OK;
-        IMMDevice* pDevice = NULL;
-        IPropertyStore* pProps = NULL;
-        PROPVARIANT varString;
-
-        CoInitialize(NULL);
-        PropVariantInit(&varString);
-
-        if (m_pEnumerator == NULL)
-        {
-            // Get enumerator for audio endpoint devices.
-            hr = CoCreateInstance(__uuidof(MMDeviceEnumerator),
-                NULL, CLSCTX_INPROC_SERVER,
-                __uuidof(IMMDeviceEnumerator),
-                (void**)&m_pEnumerator);
-        }
-        if (hr == S_OK)
-        {
-            hr = m_pEnumerator->GetDevice(pwstrId, &pDevice);
-        }
-        if (hr == S_OK)
-        {
-            hr = pDevice->OpenPropertyStore(STGM_READ, &pProps);
-        }
-        if (hr == S_OK)
-        {
-            // Get the endpoint device's friendly-name property.
-            hr = pProps->GetValue(PKEY_Device_FriendlyName, &varString);
-        }
-        printf("----------------------\nDevice name: \"%S\"\n"
-            "  Endpoint ID string: \"%S\"\n",
-            (hr == S_OK) ? varString.pwszVal : L"null device",
-            (pwstrId != NULL) ? pwstrId : L"null ID");
-
-        PropVariantClear(&varString);
-
-        SAFE_RELEASE(pProps)
-            SAFE_RELEASE(pDevice)
-            return hr;
-    }
+    }; 
 
     XAudio2Device::XAudio2Device() :
         leftSpeaker(LEFT_SPEAKER),
@@ -217,10 +171,10 @@ namespace onesnd
         xEngine->CreateMasteringVoice(&xMaster, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE);
         X3DAudioInitialize(SPEAKER_STEREO, X3DAUDIO_SPEED_OF_SOUND, X3DInstance);
 
-        XAUDIO2_DEVICE_DETAILS dd;
-        ZeroMemory(&dd, sizeof(dd));
-        xEngine->GetDeviceDetails(0, &dd);
-        channelCount = dd.OutputFormat.Format.nChannels;
+         
+        ZeroMemory(&deviceDetails, sizeof(deviceDetails));
+        xEngine->GetDeviceDetails(0, &deviceDetails);
+        channelCount = deviceDetails.OutputFormat.Format.nChannels;
         mmClient = new CMMNotificationClient();
 
     }
@@ -241,7 +195,12 @@ namespace onesnd
             mmClient = nullptr;
         }
     }
-
+    unsigned int XAudio2Device::refreshChannelCount()  
+    {
+        xEngine->GetDeviceDetails(0, &deviceDetails);
+        channelCount = deviceDetails.OutputFormat.Format.nChannels;
+        return channelCount;
+    }
     XABuffer* XABuffer::create(SoundBuffer* ctx, int size, AudioStream* strm, int* pos)
     {
         if (pos) 
