@@ -106,10 +106,9 @@ namespace XAudio
         }
 
 
-        public static unsafe void XACT3DCalculate(Listener listener, Emitter emitter,
+        public unsafe void XACT3DCalculate(Listener listener, Emitter emitter,
             DspSettings settings)
         {
-            var instance = GetX3DAudioInstance();
             //NativeMethods.X3DAudioCore_XACT3DCalculate(instance, pListener, pEmitter, pDSPSettings);
 
             if (settings == null)
@@ -170,22 +169,20 @@ namespace XAudio
                 nativeSettings.MatrixCoefficientsPtr = new IntPtr(pmc);
                 nativeSettings.DelayTimesPtr = new IntPtr(pdt);
 
-                #endregion
-                 
-                NativeMethods.X3DAudioCore_XACT3DCalculate(instance, (IntPtr)(&nativeListener),
+                NativeMethods.OneSound_XACT3DCalculate( (IntPtr)(&nativeListener),
                     (IntPtr)(&nativeEmitter), new IntPtr(&nativeSettings));
 
                 settings.NativeInstance = nativeSettings;
             }
+            #endregion
 
             nativeEmitter.FreeMemory();
         }
 
-        public static unsafe void X3DAudioCalculate(Listener listener, Emitter emitter, CalculateFlags flags,
+        public unsafe void X3DAudioCalculate(Listener listener, Emitter emitter, CalculateFlags flags,
             DspSettings settings)
         {
-            var instance = GetX3DAudioInstance();
-            
+
             if (settings == null)
                 throw new ArgumentNullException("settings");
             if (listener == null)
@@ -196,7 +193,8 @@ namespace XAudio
                 throw new ArgumentOutOfRangeException("flags");
 
             if (emitter.ChannelCount > 1 && emitter.ChannelAzimuths == null)
-                throw new ArgumentException("No ChannelAzimuths set for the specified emitter. The ChannelAzimuths property must not be null if the ChannelCount of the emitter is bigger than 1.");
+                throw new ArgumentException(
+                    "No ChannelAzimuths set for the specified emitter. The ChannelAzimuths property must not be null if the ChannelCount of the emitter is bigger than 1.");
 
             DspSettings.DspSettingsNative nativeSettings = settings.NativeInstance;
             Listener.ListenerNative nativeListener = listener.NativeInstance;
@@ -246,27 +244,16 @@ namespace XAudio
                 nativeSettings.MatrixCoefficientsPtr = new IntPtr(pmc);
                 nativeSettings.DelayTimesPtr = new IntPtr(pdt);
 
-                #endregion
-
-                //fixed (void* p = &_handle)
-                //{
-                //    X3DAudioCalculate(new IntPtr(p), (IntPtr)(&nativeListener),
-                //        (IntPtr)(&nativeEmitter), flags,
-                //        new IntPtr(&nativeSettings));
-                //}
-                NativeMethods.X3DAudioCore_X3DAudioCalculate(instance, (IntPtr)(&nativeListener),
+                NativeMethods.OneSound_X3DAudioCalculate((IntPtr)(&nativeListener),
                     (IntPtr)(&nativeEmitter), flags,
                     new IntPtr(&nativeSettings));
 
                 settings.NativeInstance = nativeSettings;
             }
 
-            nativeEmitter.FreeMemory();
-        }
+            #endregion
 
-        public static IntPtr GetX3DAudioInstance()
-        {
-            return NativeMethods.X3DAudioCore_GetInstance();
+            nativeEmitter.FreeMemory();
         }
     }
 }

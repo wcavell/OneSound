@@ -181,11 +181,9 @@ namespace XAudio
 
 
         [DllImport(dllName)]
-        public static extern void X3DAudioCore_XACT3DCalculate(IntPtr X3DInstance, IntPtr pListener, IntPtr pEmitter, IntPtr pDSPSettings);
+        public static extern void OneSound_XACT3DCalculate(IntPtr pListener, IntPtr pEmitter, IntPtr pDSPSettings);
         [DllImport(dllName)]
-        public static extern void X3DAudioCore_X3DAudioCalculate(IntPtr instance, IntPtr listener, IntPtr emitter, CalculateFlags flags,
+        public static extern void OneSound_X3DAudioCalculate( IntPtr listener, IntPtr emitter, CalculateFlags flags,
             IntPtr dspSettingsPtr);
-        [DllImport(dllName)]
-        public static extern IntPtr X3DAudioCore_GetInstance();
     }
 }

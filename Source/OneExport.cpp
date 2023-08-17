@@ -258,15 +258,14 @@ extern "C"
 		return listener->getListener();
 	}
 
-	ONE_SOUND_API void X3DAudioCore_XACT3DCalculate(X3DAUDIO_HANDLE X3DInstance, X3DAUDIO_LISTENER* pListener, X3DAUDIO_EMITTER* pEmitter, X3DAUDIO_DSP_SETTINGS* pDSPSettings) {
-		XACT3DCalculate(X3DInstance, pListener, pEmitter, pDSPSettings);
-	}
-	ONE_SOUND_API void X3DAudioCore_X3DAudioCalculate(X3DAUDIO_HANDLE instance, X3DAUDIO_LISTENER* listener, X3DAUDIO_EMITTER* emitter, uint32_t flags,
-		X3DAUDIO_DSP_SETTINGS* dspSettingsPtr) {
-		X3DAudioCalculate(instance, listener, emitter, flags, dspSettingsPtr);
-	}
-	ONE_SOUND_API BYTE* X3DAudioCore_GetInstance() {
+	ONE_SOUND_API void OneSound_XACT3DCalculate(X3DAUDIO_LISTENER* pListener, X3DAUDIO_EMITTER* pEmitter, X3DAUDIO_DSP_SETTINGS* pDSPSettings) {
+
 		auto instance = XAudio2Device::instance().X3DInstance;
-		return instance;
+		XACT3DCalculate(instance, pListener, pEmitter, pDSPSettings);
 	}
+	ONE_SOUND_API void OneSound_X3DAudioCalculate(X3DAUDIO_LISTENER* listener, X3DAUDIO_EMITTER* emitter, uint32_t flags,
+		X3DAUDIO_DSP_SETTINGS* dspSettingsPtr) {
+		auto instance = XAudio2Device::instance().X3DInstance;
+		X3DAudioCalculate(instance, listener, emitter, flags, dspSettingsPtr);
+	} 
 }

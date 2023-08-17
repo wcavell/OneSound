@@ -13,7 +13,7 @@ namespace XAudio.X3DAudio
     /// </remarks>
     public class Listener
     {
-        public ListenerNative NativeInstance = new ListenerNative();
+        internal ListenerNative NativeInstance = new ListenerNative();
 
         /// <summary>
         ///     Gets or sets the orientation of front direction. When <see cref="Cone" /> is NULL OrientFront is used only for

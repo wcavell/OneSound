@@ -15,6 +15,9 @@ extern "C" {
     ONE_SOUND_API void OneSound_SetRightSpeakerMap(uint32_t rSpeaker);
     ONE_SOUND_API int32_t OneSound_GetLeftSpeakerMap();
     ONE_SOUND_API int32_t OneSound_GetRightSpeakerMap();
+    ONE_SOUND_API void OneSound_XACT3DCalculate(X3DAUDIO_LISTENER* pListener, X3DAUDIO_EMITTER* pEmitter, X3DAUDIO_DSP_SETTINGS* pDSPSettings);
+    ONE_SOUND_API void OneSound_X3DAudioCalculate(X3DAUDIO_LISTENER* listener, X3DAUDIO_EMITTER* emitter, uint32_t flags,
+        X3DAUDIO_DSP_SETTINGS* dspSettingsPtr);
     ONE_SOUND_API void OneSound_Destroy(OneSound* one);
 
     ONE_SOUND_API SoundBuffer* SoundBuffer_Create();
@@ -76,8 +79,5 @@ extern "C" {
     ONE_SOUND_API void Listener_AddSound(Listener* listener, Sound3D* sound);
     ONE_SOUND_API void Listener_RemoveSound(Listener* listener, Sound3D* sound);
 
-    ONE_SOUND_API void X3DAudioCore_XACT3DCalculate(X3DAUDIO_HANDLE X3DInstance, X3DAUDIO_LISTENER* pListener, X3DAUDIO_EMITTER* pEmitter, X3DAUDIO_DSP_SETTINGS* pDSPSettings);
-    ONE_SOUND_API void X3DAudioCore_X3DAudioCalculate(X3DAUDIO_HANDLE instance, X3DAUDIO_LISTENER* listener, X3DAUDIO_EMITTER* emitter, uint32_t flags,
-        X3DAUDIO_DSP_SETTINGS* dspSettingsPtr);
-    ONE_SOUND_API BYTE* X3DAudioCore_GetInstance();
+
 }
