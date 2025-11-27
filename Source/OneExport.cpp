@@ -27,6 +27,14 @@ extern "C"
 	ONE_SOUND_API int32_t OneSound_GetOutputChannels() {
 		return XAudio2Device::instance().refreshChannelCount();
 	}
+	ONE_SOUND_API int32_t OneSound_GetChannelMask()
+	{
+		return XAudio2Device::instance().getChannelMask();
+	}
+	ONE_SOUND_API void  OneSound_GetChannelInfo(uint32_t& count, uint32_t& mask)
+	{
+		XAudio2Device::instance().getChannelInfo(count, mask);
+	}
 	ONE_SOUND_API void OneSound_SetLeftSpeakerMap(uint32_t lSpeaker)
 	{
 		XAudio2Device::instance().setLeftSpeaker(lSpeaker);
@@ -139,6 +147,10 @@ extern "C"
 	} 
 	ONE_SOUND_API X3DAUDIO_DSP_SETTINGS* Sound3D_GetDspSetting(Sound3D* sound) {
 		return sound->getDspSetting();
+	}
+	ONE_SOUND_API void Sound3D_SetSpeakerVolume(Sound3D* sound, uint32_t speaker, float lVolume, float rVolume)
+	{
+		sound->setSpeakerVolume(speaker, lVolume, rVolume);
 	}
 	ONE_SOUND_API void Sound3D_Destroy(Sound3D* sound)
 	{

@@ -45,7 +45,17 @@ namespace XAudio
                        Speaker.SideLeft | Speaker.SideRight;
             }
         }
-
+        /// <summary>
+        /// 5.1变种
+        /// </summary>
+        public static Speaker Speaker5Point2
+        {
+            get
+            {
+                return Speaker.FrontLeft | Speaker.FrontRight | Speaker.FrontCenter | Speaker.LowFrequency |
+                       Speaker.BackLeft | Speaker.BackRight;
+            }
+        }
         /// <summary>
         /// 7.1
         /// </summary>
@@ -93,6 +103,18 @@ namespace XAudio
         public static int SpeakerCount
         {
             get { return NativeMethods.OneSound_GetOutputChannels(); }
+        }
+
+        private static int _SpCount;
+        private static Speaker _speaker;
+
+        public static Speaker SpeakerMask
+        {
+            get
+            {
+                NativeMethods.OneSound_GetChannelInfo(ref _SpCount, ref _speaker);
+                return _speaker;
+            }
         }
 
         public OneAudio()

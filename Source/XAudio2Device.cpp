@@ -157,24 +157,27 @@ namespace onesnd
     void XAudio2Device::initialize()
     {
         CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-        auto flags = long();
-
+        auto flags = long(); 
     /*#if defined (_WIN32) && defined (_DEBUG)
         flags |= XAUDIO2_DEBUG_ENGINE;
     #else
         flags |= 0;
     #endif*/
-        flags |= 0;
+        flags |= XAUDIO2_VOICE_MUSIC;
 
 
         XAudio2Create(&xEngine, flags);
-        xEngine->CreateMasteringVoice(&xMaster, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE);
-        X3DAudioInitialize(SPEAKER_STEREO, X3DAUDIO_SPEED_OF_SOUND, X3DInstance);
+        auto hr = xEngine->CreateMasteringVoice(&xMaster, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE);
+
+    	X3DAudioInitialize(SPEAKER_STEREO, X3DAUDIO_SPEED_OF_SOUND, X3DInstance);
 
          
         ZeroMemory(&deviceDetails, sizeof(deviceDetails));
         xEngine->GetDeviceDetails(0, &deviceDetails);
+        uint32_t count = -1;
+        xEngine->GetDeviceCount(&count);
         channelCount = deviceDetails.OutputFormat.Format.nChannels;
+        channelMask = deviceDetails.OutputFormat.dwChannelMask;
         mmClient = new CMMNotificationClient();
 
     }
@@ -199,7 +202,16 @@ namespace onesnd
     {
         xEngine->GetDeviceDetails(0, &deviceDetails);
         channelCount = deviceDetails.OutputFormat.Format.nChannels;
+        channelMask = deviceDetails.OutputFormat.dwChannelMask;
         return channelCount;
+    }
+    void XAudio2Device::getChannelInfo(uint32_t& count, uint32_t& mask)
+    {
+        xEngine->GetDeviceDetails(0, &deviceDetails);
+        channelCount = deviceDetails.OutputFormat.Format.nChannels;
+        channelMask = deviceDetails.OutputFormat.dwChannelMask;
+        count = channelCount;
+        mask = channelMask;
     }
     XABuffer* XABuffer::create(SoundBuffer* ctx, int size, AudioStream* strm, int* pos)
     {

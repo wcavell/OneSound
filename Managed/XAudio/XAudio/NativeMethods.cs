@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor.VersionControl;
 using XAudio.Utils;
 using XAudio.X3DAudio;
 
@@ -35,6 +36,8 @@ namespace XAudio
         [DllImport(dllName)]
         public static extern int OneSound_GetOutputChannels();
 
+        [DllImport(dllName)]
+        public static extern void OneSound_GetChannelInfo(ref int count, ref Speaker mask);
         [DllImport(dllName)]
         public static extern void OneSound_SetLeftSpeakerMap(Speaker lSpeakers);
 

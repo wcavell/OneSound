@@ -45,6 +45,8 @@ namespace onesnd
         IXAudio2MasteringVoice* getMaster() const { return xMaster; }
         unsigned int getChannelCount() const { return channelCount; }
         unsigned int refreshChannelCount();
+        uint32_t getChannelMask() { return channelMask; }
+        void getChannelInfo(uint32_t& count, uint32_t& mask);
         inline unsigned int getLeftSpeaker()const { return leftSpeaker; }
         inline unsigned int getRightSpeaker()const { return  rightSpeaker; }         
         void setLeftSpeaker(const unsigned int &lSpeaker)
@@ -61,6 +63,7 @@ namespace onesnd
         IXAudio2* xEngine;
         IXAudio2MasteringVoice* xMaster;
         unsigned int channelCount;
+        uint32_t channelMask;
         X3DAUDIO_LISTENER xListener;
         unsigned int leftSpeaker;
         unsigned int rightSpeaker;

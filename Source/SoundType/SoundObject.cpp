@@ -95,7 +95,7 @@ namespace onesnd
             else if (sound_buf->WaveFormatHash() != sound->WaveFormatHash()) // WaveFormat has changed?
                 source->DestroyVoice(); // Destroy old and re-create with new
 
-            XAudio2Device::instance().getEngine()->CreateSourceVoice(&source, sound_buf->WaveFormat(), 0, 2.0F, state);
+            auto hr = XAudio2Device::instance().getEngine()->CreateSourceVoice(&source, sound_buf->WaveFormat(), 0, 2.0F, state);
 
             sound_buf->BindSource(this);
 
@@ -306,7 +306,9 @@ namespace onesnd
     }
     void SoundObject::setChannelMap()
     {
-        outChannelCount = XAudio2Device::instance().getChannelCount();
+        //outChannelCount = XAudio2Device::instance().getChannelCount();
+        outChannelCount = 6;
+        //auto mask = XAudio2Device::instance().getChannelMask();
         if (outChannelCount == 0)
             outChannelCount = 2;
         if (outChannelCount > 0)
@@ -344,8 +346,8 @@ namespace onesnd
             channelMap[1] = SPEAKER_FRONT_RIGHT;
             channelMap[2] = SPEAKER_FRONT_CENTER;
             channelMap[3] = SPEAKER_LOW_FREQUENCY;
-            channelMap[4] = SPEAKER_SIDE_LEFT;
-            channelMap[5] = SPEAKER_SIDE_RIGHT;
+            channelMap[4] = SPEAKER_BACK_LEFT;
+            channelMap[5] = SPEAKER_BACK_RIGHT; 
             break;
         case 7: // 6.1 
             channelMap[0] = SPEAKER_FRONT_LEFT;

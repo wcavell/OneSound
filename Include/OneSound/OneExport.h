@@ -11,6 +11,8 @@ extern "C" {
     ONE_SOUND_API char* OneSound_GetLibraryStatus(OneSound* one);
     ONE_SOUND_API char* OneSound_GetLibraryName(OneSound* one);
     ONE_SOUND_API int32_t OneSound_GetOutputChannels();
+    ONE_SOUND_API int32_t OneSound_GetChannelMask();
+    ONE_SOUND_API void  OneSound_GetChannelInfo(uint32_t& count, uint32_t& mask);
     ONE_SOUND_API void OneSound_SetLeftSpeakerMap(uint32_t lSpeaker);
     ONE_SOUND_API void OneSound_SetRightSpeakerMap(uint32_t rSpeaker);
     ONE_SOUND_API int32_t OneSound_GetLeftSpeakerMap();
@@ -43,6 +45,7 @@ extern "C" {
     ONE_SOUND_API Sound3D* Sound3D_Create_ByBuffer(SoundBuffer* buff, bool loop, bool play, float volume);
     ONE_SOUND_API void Sound3D_SetSourcePosition(Sound3D* sound, X3DAUDIO_VECTOR position);
     ONE_SOUND_API X3DAUDIO_DSP_SETTINGS* Sound3D_GetDspSetting(Sound3D* sound);
+    ONE_SOUND_API void Sound3D_SetSpeakerVolume(Sound3D* sound, uint32_t speaker, float lVolume, float rVolume);
     ONE_SOUND_API void Sound3D_Destroy(Sound3D* sound);
 
     ONE_SOUND_API void SoundObject_SetSound(SoundObject* so, SoundBuffer* sound, bool loop, bool play, float volume);
